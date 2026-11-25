@@ -14,8 +14,8 @@ android {
         applicationId = "com.homelab.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 43
-        versionName = "1.6.6"
+        versionCode = 44
+        versionName = "1.6.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // F-Droid builds must not contact GitHub or offer an incompatible APK update.

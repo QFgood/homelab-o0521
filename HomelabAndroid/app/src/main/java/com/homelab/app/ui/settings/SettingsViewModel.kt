@@ -57,8 +57,8 @@ class SettingsViewModel @Inject constructor(
     private val _appIconApplying = MutableStateFlow(false)
     val appIconApplying: StateFlow<Boolean> = _appIconApplying
 
-    private val updateManifestUrl = "https://raw.githubusercontent.com/AnARCHIS12/homelab/main/app-version.json"
-    private val defaultUpdateUrl = "https://github.com/AnARCHIS12/homelab/releases"
+    private val updateManifestUrl = "https://raw.githubusercontent.com/QFgood/homelab-o0521/main/app-version.json"
+    private val defaultUpdateUrl = "https://github.com/QFgood/homelab-o0521/releases"
     private val updateCheckIntervalMs = 15 * 60 * 1000L
 
     val instancesByType: StateFlow<Map<ServiceType, List<ServiceInstance>>> = servicesRepository.instancesByType

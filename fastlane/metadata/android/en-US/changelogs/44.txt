@@ -1,0 +1,2 @@
+Screenshots are now allowed on login, app lock, PIN, and backup screens.
+GitHub builds now check for updates from QFgood/homelab-o0521.

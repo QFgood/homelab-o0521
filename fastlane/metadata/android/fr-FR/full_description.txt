@@ -8,3 +8,5 @@ Fonctionnalités clés :
 • Chiffrement matériel des identifiants et clés API via l'Android KeyStore (AES-256-GCM).
 • Interface moderne Material 3 avec thèmes sombre et clair.
 • 100 % gratuit et open source sous licence Apache 2.0.
+
+Les captures d’écran sont autorisées sur les écrans de connexion, de verrouillage, de code PIN et de sauvegarde.
