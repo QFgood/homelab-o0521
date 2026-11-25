@@ -6,6 +6,7 @@ import com.homelab.app.data.remote.DebugLoggingInterceptor
 import com.homelab.app.data.remote.HtmlDetectionInterceptor
 import com.homelab.app.data.remote.SmartFallbackInterceptor
 import com.homelab.app.data.remote.TlsRoutingCallFactory
+import com.homelab.app.data.remote.api.MediaryScoutApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -150,6 +151,11 @@ object NetworkModule {
     fun provideMaltrailApi(retrofit: Retrofit): com.homelab.app.data.remote.api.MaltrailApi {
         return retrofit.create(com.homelab.app.data.remote.api.MaltrailApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideMediaryScoutApi(retrofit: Retrofit): MediaryScoutApi =
+        retrofit.create(MediaryScoutApi::class.java)
 
     @Provides
     @Singleton

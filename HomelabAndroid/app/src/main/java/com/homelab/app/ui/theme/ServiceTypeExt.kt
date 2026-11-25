@@ -65,6 +65,7 @@ val ServiceType.primaryColor: Color
         ServiceType.WAKAPI -> Color(0xFF2563EB)
         ServiceType.PTERODACTYL -> Color(0xFF5D87FF)
         ServiceType.CALAGOPUS -> Color(0xFF16A34A)
+        ServiceType.MEDIARY_SCOUT -> if (isThemeDark()) Color(0xFF1ED760) else Color(0xFF14713B)
         ServiceType.TRUENAS -> if (isThemeDark()) Color(0xFF0095D5) else Color(0xFF0078B0)
         ServiceType.UNKNOWN -> if (isThemeDark()) Color.LightGray else Color.Gray
     }
@@ -105,6 +106,7 @@ val ServiceType.backgroundColor: Color
         ServiceType.WAKAPI -> Color(0xFF2563EB).copy(alpha = 0.12f)
         ServiceType.PTERODACTYL -> Color(0xFF5D87FF).copy(alpha = 0.12f)
         ServiceType.CALAGOPUS -> Color(0xFF16A34A).copy(alpha = 0.12f)
+        ServiceType.MEDIARY_SCOUT -> Color(0xFF1ED760).copy(alpha = 0.12f)
         ServiceType.TRUENAS -> (if (isThemeDark()) Color(0xFF0095D5) else Color(0xFF0078B0)).copy(alpha = 0.12f)
         ServiceType.UNKNOWN -> if (isThemeDark()) Color(0xFF334155) else Color(0xFFF1F5F9)
     }
@@ -145,6 +147,7 @@ val ServiceType.localIconRes: Int
         ServiceType.WAKAPI -> R.drawable.service_wakapi
         ServiceType.PTERODACTYL -> R.drawable.service_pterodactyl
         ServiceType.CALAGOPUS -> R.drawable.service_calagopus
+        ServiceType.MEDIARY_SCOUT -> R.drawable.service_mediary_scout
         ServiceType.TRUENAS -> R.drawable.service_truenas
         ServiceType.UNKNOWN -> 0
     }
@@ -185,5 +188,6 @@ val ServiceType.fallbackIcon: ImageVector
         ServiceType.TRUENAS -> Icons.Default.Storage
         ServiceType.PTERODACTYL -> Icons.Default.Dns
         ServiceType.CALAGOPUS -> Icons.Default.Dns
+        ServiceType.MEDIARY_SCOUT -> Icons.Default.Tv
         ServiceType.UNKNOWN -> Icons.Default.Widgets
     }

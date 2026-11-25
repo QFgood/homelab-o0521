@@ -456,7 +456,7 @@ class AuthInterceptor @Inject constructor(
                     builder.addHeader("X-Api-Key", instance.apiKey)
                 }
             }
-            ServiceType.LINUX_UPDATE -> {
+            ServiceType.LINUX_UPDATE, ServiceType.MEDIARY_SCOUT -> {
                 if (!hasAuthorization && !instance.apiKey.isNullOrBlank()) {
                     val token = instance.apiKey.trim().let { raw ->
                         if (raw.startsWith("bearer ", ignoreCase = true)) raw.substring(7).trim() else raw

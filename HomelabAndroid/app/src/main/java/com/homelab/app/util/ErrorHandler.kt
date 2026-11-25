@@ -4,6 +4,7 @@ import android.content.Context
 import com.homelab.app.R
 import com.homelab.app.data.remote.HtmlResponseException
 import com.homelab.app.data.repository.CraftyApiException
+import com.homelab.app.data.repository.MediaryScoutApiUnavailable
 import com.homelab.app.data.repository.PatchmonApiException
 import com.homelab.app.data.repository.WakapiApiException
 import kotlinx.serialization.SerializationException
@@ -29,6 +30,7 @@ object ErrorHandler {
             is ConnectException, is UnknownHostException -> context.getString(R.string.error_server_unreachable) // We'll need to add string resources
             is SocketTimeoutException -> context.getString(R.string.error_timeout)
             is SerializationException -> context.getString(R.string.error_parsing)
+            is MediaryScoutApiUnavailable -> context.getString(R.string.mediary_scout_api_not_found)
             is IOException -> context.getString(R.string.error_network)
             is HttpException -> {
                 when (error.code()) {

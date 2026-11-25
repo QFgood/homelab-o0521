@@ -1967,4 +1967,26 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d en cours d’exécution</string>
     <string name="proxmox_resource_container">Conteneur</string>
     <string name="proxmox_resource_vm">VM</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">Mediary Scout</string>
+    <string name="login_hint_mediary_scout">Saisissez l’URL de l’instance et le jeton de l’API Agent. Pour Docker, utilisez MEDIA_TRACK_AGENT_TOKEN. Dans l’application de bureau, le jeton se trouve dans ~/.mediary/agent.json.</string>
+    <string name="mediary_scout_token">Jeton de l’API Agent</string>
+    <string name="mediary_scout_api_not_found">L’API Agent de Mediary Scout est indisponible. Vérifiez l’URL de l’instance et activez le jeton de l’API Agent.</string>
+    <string name="mediary_scout_library">Bibliothèque</string>
+    <string name="mediary_scout_tasks">Tâches</string>
+    <string name="mediary_scout_notifications">Notifications</string>
+    <string name="mediary_scout_tracking">Entrées suivies</string>
+    <string name="mediary_scout_active">En suivi</string>
+    <string name="mediary_scout_no_entries">Aucune entrée suivie.</string>
+    <string name="mediary_scout_no_tasks">Aucune tâche en attente ou en cours.</string>
+    <string name="mediary_scout_no_notifications">Aucune notification récente.</string>
+    <string name="mediary_scout_season">Saison %1$d</string>
+    <string name="mediary_scout_progress">%1$d sur %2$d obtenus</string>
+    <string name="mediary_scout_obtained">%1$d obtenus</string>
+    <string name="mediary_scout_missing">Diffusés mais manquants : %1$s</string>
+    <string name="mediary_scout_movie">Film</string>
+    <string name="mediary_scout_tv">Série</string>
+    <string name="mediary_scout_anime">Anime</string>
+    <string name="mediary_scout_queued">En attente</string>
 </resources>

@@ -1967,4 +1967,26 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d in esecuzione</string>
     <string name="proxmox_resource_container">Container</string>
     <string name="proxmox_resource_vm">VM</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">Mediary Scout</string>
+    <string name="login_hint_mediary_scout">Inserisci l’URL dell’istanza e il token dell’API Agent. Per Docker usa MEDIA_TRACK_AGENT_TOKEN. Nell’app desktop il token si trova in ~/.mediary/agent.json.</string>
+    <string name="mediary_scout_token">Token dell’API Agent</string>
+    <string name="mediary_scout_api_not_found">L’API Agent di Mediary Scout non è disponibile. Controlla l’URL dell’istanza e abilita il token dell’API Agent.</string>
+    <string name="mediary_scout_library">Libreria</string>
+    <string name="mediary_scout_tasks">Attività</string>
+    <string name="mediary_scout_notifications">Notifiche</string>
+    <string name="mediary_scout_tracking">Titoli seguiti</string>
+    <string name="mediary_scout_active">In monitoraggio</string>
+    <string name="mediary_scout_no_entries">Nessun titolo seguito.</string>
+    <string name="mediary_scout_no_tasks">Nessuna attività in coda o in esecuzione.</string>
+    <string name="mediary_scout_no_notifications">Nessuna notifica recente.</string>
+    <string name="mediary_scout_season">Stagione %1$d</string>
+    <string name="mediary_scout_progress">%1$d di %2$d ottenuti</string>
+    <string name="mediary_scout_obtained">%1$d ottenuti</string>
+    <string name="mediary_scout_missing">Trasmessi ma mancanti: %1$s</string>
+    <string name="mediary_scout_movie">Film</string>
+    <string name="mediary_scout_tv">Serie</string>
+    <string name="mediary_scout_anime">Anime</string>
+    <string name="mediary_scout_queued">In coda</string>
 </resources>

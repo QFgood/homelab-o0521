@@ -1967,4 +1967,26 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d 正在运行</string>
     <string name="proxmox_resource_container">容器</string>
     <string name="proxmox_resource_vm">虚拟机</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">巡影</string>
+    <string name="login_hint_mediary_scout">输入巡影实例地址和 Agent API 令牌。Docker 部署使用 MEDIA_TRACK_AGENT_TOKEN，桌面版令牌位于 ~/.mediary/agent.json。</string>
+    <string name="mediary_scout_token">Agent API 令牌</string>
+    <string name="mediary_scout_api_not_found">巡影 Agent API 不可用。请检查实例地址，并确认已启用 Agent API 令牌。</string>
+    <string name="mediary_scout_library">追踪库</string>
+    <string name="mediary_scout_tasks">任务</string>
+    <string name="mediary_scout_notifications">通知</string>
+    <string name="mediary_scout_tracking">追踪条目</string>
+    <string name="mediary_scout_active">追踪中</string>
+    <string name="mediary_scout_no_entries">暂无追踪条目。</string>
+    <string name="mediary_scout_no_tasks">没有排队中或运行中的任务。</string>
+    <string name="mediary_scout_no_notifications">暂无近期通知。</string>
+    <string name="mediary_scout_season">第 %1$d 季</string>
+    <string name="mediary_scout_progress">已获取 %1$d / %2$d</string>
+    <string name="mediary_scout_obtained">已获取 %1$d</string>
+    <string name="mediary_scout_missing">已播未获取：%1$s</string>
+    <string name="mediary_scout_movie">电影</string>
+    <string name="mediary_scout_tv">剧集</string>
+    <string name="mediary_scout_anime">动画</string>
+    <string name="mediary_scout_queued">排队中</string>
 </resources>

@@ -129,6 +129,7 @@ class ServicesRepository @Inject constructor(
                     ServiceType.PATCHMON -> listOf("/health", "/api/v1/openapi.json", "/api/v1/api/hosts", "")
                     ServiceType.PTERODACTYL -> listOf("/api/application/users", "/api/client", "")
                     ServiceType.CALAGOPUS -> listOf("/api/v1/health", "")
+                    ServiceType.MEDIARY_SCOUT -> listOf("/api/health")
                     ServiceType.RADARR, ServiceType.SONARR -> listOf("/api/v3/system/status", "/api/v3/health", "")
                     ServiceType.LIDARR -> listOf("/api/v1/system/status", "/api/v1/health", "")
                     ServiceType.QBITTORRENT -> listOf("/api/v2/app/version", "/api/v2/app/buildInfo", "")

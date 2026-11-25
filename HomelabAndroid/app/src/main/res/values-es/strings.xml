@@ -1967,4 +1967,26 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d en ejecución</string>
     <string name="proxmox_resource_container">Contenedor</string>
     <string name="proxmox_resource_vm">Máquina virtual</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">Mediary Scout</string>
+    <string name="login_hint_mediary_scout">Introduce la URL de la instancia y el token de la API de agente. Para Docker, usa MEDIA_TRACK_AGENT_TOKEN. En la aplicación de escritorio, el token está en ~/.mediary/agent.json.</string>
+    <string name="mediary_scout_token">Token de la API de agente</string>
+    <string name="mediary_scout_api_not_found">La API de agente de Mediary Scout no está disponible. Comprueba la URL de la instancia y habilita el token de la API de agente.</string>
+    <string name="mediary_scout_library">Biblioteca</string>
+    <string name="mediary_scout_tasks">Tareas</string>
+    <string name="mediary_scout_notifications">Notificaciones</string>
+    <string name="mediary_scout_tracking">Elementos en seguimiento</string>
+    <string name="mediary_scout_active">En seguimiento</string>
+    <string name="mediary_scout_no_entries">Aún no hay elementos en seguimiento.</string>
+    <string name="mediary_scout_no_tasks">No hay tareas en cola ni en curso.</string>
+    <string name="mediary_scout_no_notifications">No hay notificaciones recientes.</string>
+    <string name="mediary_scout_season">Temporada %1$d</string>
+    <string name="mediary_scout_progress">%1$d de %2$d obtenidos</string>
+    <string name="mediary_scout_obtained">%1$d obtenidos</string>
+    <string name="mediary_scout_missing">Emitidos y pendientes: %1$s</string>
+    <string name="mediary_scout_movie">Película</string>
+    <string name="mediary_scout_tv">Serie</string>
+    <string name="mediary_scout_anime">Anime</string>
+    <string name="mediary_scout_queued">En cola</string>
 </resources>

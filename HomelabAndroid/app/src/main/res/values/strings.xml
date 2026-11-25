@@ -1971,4 +1971,26 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d running</string>
     <string name="proxmox_resource_container">Container</string>
     <string name="proxmox_resource_vm">VM</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">Mediary Scout</string>
+    <string name="login_hint_mediary_scout">Enter the instance URL and Agent API token. Use MEDIA_TRACK_AGENT_TOKEN for Docker. In the desktop app, the token is in ~/.mediary/agent.json.</string>
+    <string name="mediary_scout_token">Agent API token</string>
+    <string name="mediary_scout_api_not_found">Mediary Scout Agent API is unavailable. Check the instance URL and enable the Agent API token.</string>
+    <string name="mediary_scout_library">Library</string>
+    <string name="mediary_scout_tasks">Tasks</string>
+    <string name="mediary_scout_notifications">Notifications</string>
+    <string name="mediary_scout_tracking">Tracked entries</string>
+    <string name="mediary_scout_active">Tracking</string>
+    <string name="mediary_scout_no_entries">No tracked entries yet.</string>
+    <string name="mediary_scout_no_tasks">No queued or running tasks.</string>
+    <string name="mediary_scout_no_notifications">No recent notifications.</string>
+    <string name="mediary_scout_season">Season %1$d</string>
+    <string name="mediary_scout_progress">Obtained %1$d of %2$d</string>
+    <string name="mediary_scout_obtained">Obtained %1$d</string>
+    <string name="mediary_scout_missing">Aired but missing: %1$s</string>
+    <string name="mediary_scout_movie">Film</string>
+    <string name="mediary_scout_tv">Series</string>
+    <string name="mediary_scout_anime">Anime</string>
+    <string name="mediary_scout_queued">Queued</string>
 </resources>
