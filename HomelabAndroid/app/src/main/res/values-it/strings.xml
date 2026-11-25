@@ -1989,4 +1989,34 @@
     <string name="mediary_scout_tv">Serie</string>
     <string name="mediary_scout_anime">Anime</string>
     <string name="mediary_scout_queued">In coda</string>
+
+    <!-- GitHub updates and Docker notifications -->
+    <string name="github_update_title">Aggiornamenti GitHub</string>
+    <string name="github_update_check">Controlla aggiornamenti</string>
+    <string name="github_update_checking">Controllo su GitHub…</string>
+    <string name="github_update_current">Hai la versione più recente.</string>
+    <string name="github_update_no_release">Su GitHub non è pubblicato un APK compatibile.</string>
+    <string name="github_update_found">È disponibile l’aggiornamento %1$s.</string>
+    <string name="github_update_download">Scarica APK</string>
+    <string name="github_update_downloading">Download e verifica dell’APK…</string>
+    <string name="github_update_install">Installa aggiornamento</string>
+    <string name="github_update_install_hint">Se Android richiede il permesso, concedilo e tocca di nuovo Installa aggiornamento.</string>
+    <string name="github_update_error">Impossibile controllare o scaricare l’aggiornamento. Riprova.</string>
+    <string name="github_update_install_error">Android non ha potuto aprire il programma di installazione.</string>
+    <string name="github_update_incompatible">Il pacchetto, la firma o la versione dell’APK non è compatibile.</string>
+    <string name="docker_push_title">Notifiche Docker</string>
+    <string name="docker_push_connection_channel">Stato sottoscrizione Docker</string>
+    <string name="docker_push_service_running">Sottoscrizione ntfy mantenuta attiva</string>
+    <string name="docker_push_hint">Pubblica eventi Docker su questo argomento ntfy. Homelab mantiene la connessione in background durante la sottoscrizione.</string>
+    <string name="docker_push_topic">URL HTTPS dell’argomento ntfy</string>
+    <string name="docker_push_token">Token di accesso ntfy (facoltativo)</string>
+    <string name="docker_push_connect">Salva e connetti</string>
+    <string name="docker_push_disconnect">Interrompi sottoscrizione</string>
+    <string name="docker_push_stopped">Sottoscrizione interrotta</string>
+    <string name="docker_push_connecting">Connessione a ntfy…</string>
+    <string name="docker_push_connected">Connesso. In attesa di messaggi Docker.</string>
+    <string name="docker_push_reconnecting">Connessione persa. Riconnessione…</string>
+    <string name="docker_push_rejected">Sottoscrizione non riuscita. Controlla l’URL e il token di accesso.</string>
+    <string name="docker_push_invalid_url">Inserisci un URL HTTPS che termini con il nome di un argomento ntfy.</string>
+    <string name="docker_push_error">Impossibile modificare la sottoscrizione Docker.</string>
 </resources>

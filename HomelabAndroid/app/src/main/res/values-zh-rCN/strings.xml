@@ -1989,4 +1989,34 @@
     <string name="mediary_scout_tv">剧集</string>
     <string name="mediary_scout_anime">动画</string>
     <string name="mediary_scout_queued">排队中</string>
+
+    <!-- GitHub updates and Docker notifications -->
+    <string name="github_update_title">GitHub 更新</string>
+    <string name="github_update_check">检查更新</string>
+    <string name="github_update_checking">正在检查 GitHub…</string>
+    <string name="github_update_current">已是最新版本。</string>
+    <string name="github_update_no_release">GitHub 当前没有可用的同渠道发布包。</string>
+    <string name="github_update_found">发现新版本 %1$s。</string>
+    <string name="github_update_download">下载 APK</string>
+    <string name="github_update_downloading">正在下载并校验 APK…</string>
+    <string name="github_update_install">安装更新</string>
+    <string name="github_update_install_hint">如果 Android 要求授予安装权限，请授权后再次点按「安装更新」。</string>
+    <string name="github_update_error">无法检查或下载更新，请重试。</string>
+    <string name="github_update_install_error">Android 无法打开 APK 安装程序。</string>
+    <string name="github_update_incompatible">此 APK 的包名、签名或版本与当前安装不兼容。</string>
+    <string name="docker_push_title">Docker 消息推送</string>
+    <string name="docker_push_connection_channel">Docker 订阅状态</string>
+    <string name="docker_push_service_running">正在保持 ntfy 订阅运行</string>
+    <string name="docker_push_hint">把 Docker 事件发布到此 ntfy 主题。订阅期间，Homelab 会在后台保持连接。</string>
+    <string name="docker_push_topic">ntfy 主题 HTTPS 地址</string>
+    <string name="docker_push_token">ntfy 访问令牌（可选）</string>
+    <string name="docker_push_connect">保存并连接</string>
+    <string name="docker_push_disconnect">停止订阅</string>
+    <string name="docker_push_stopped">订阅已停止</string>
+    <string name="docker_push_connecting">正在连接 ntfy…</string>
+    <string name="docker_push_connected">已连接，正在等待 Docker 消息。</string>
+    <string name="docker_push_reconnecting">连接中断，正在重连…</string>
+    <string name="docker_push_rejected">订阅失败，请检查主题地址和访问令牌。</string>
+    <string name="docker_push_invalid_url">请输入以 ntfy 主题名称结尾的 HTTPS 地址。</string>
+    <string name="docker_push_error">无法更改 Docker 订阅。</string>
 </resources>

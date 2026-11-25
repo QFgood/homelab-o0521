@@ -3,7 +3,6 @@ package com.homelab.app.ui.settings
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.homelab.app.BuildConfig
 import com.homelab.app.data.repository.LanguageMode
 import com.homelab.app.data.repository.LocalPreferencesRepository
 import com.homelab.app.data.repository.ServicesRepository
@@ -15,18 +14,12 @@ import com.homelab.app.util.ServiceType
 import com.homelab.app.work.ServiceAlertScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -36,30 +29,8 @@ class SettingsViewModel @Inject constructor(
     @param:ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
-    data class UpdateBannerState(
-        val latestVersion: String,
-        val currentVersion: String,
-        val updateUrl: String
-    )
-
-    data class UpdatePopupState(
-        val latestVersion: String,
-        val changelog: String?,
-        val updateUrl: String
-    )
-
-    private val _updateBannerState = MutableStateFlow<UpdateBannerState?>(null)
-    val updateBannerState: StateFlow<UpdateBannerState?> = _updateBannerState
-
-    private val _updatePopupState = MutableStateFlow<UpdatePopupState?>(null)
-    val updatePopupState: StateFlow<UpdatePopupState?> = _updatePopupState
-
     private val _appIconApplying = MutableStateFlow(false)
     val appIconApplying: StateFlow<Boolean> = _appIconApplying
-
-    private val updateManifestUrl = "https://raw.githubusercontent.com/AnARCHIS12/homelab/main/app-version.json"
-    private val defaultUpdateUrl = "https://github.com/AnARCHIS12/homelab/releases"
-    private val updateCheckIntervalMs = 15 * 60 * 1000L
 
     val instancesByType: StateFlow<Map<ServiceType, List<ServiceInstance>>> = servicesRepository.instancesByType
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
@@ -94,14 +65,6 @@ class SettingsViewModel @Inject constructor(
 
     val backgroundAlertsEnabled: StateFlow<Boolean> = localPreferencesRepository.backgroundAlertsEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-    init {
-        if (BuildConfig.ENABLE_UPDATE_CHECK) {
-            viewModelScope.launch {
-                checkForUpdateBanner(force = false)
-            }
-        }
-    }
 
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
@@ -191,157 +154,4 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun dismissUpdateBanner() {
-        val latest = _updateBannerState.value?.latestVersion ?: return
-        viewModelScope.launch {
-            localPreferencesRepository.setDismissedUpdateVersion(latest)
-            _updateBannerState.value = null
-        }
-    }
-
-    fun dismissUpdatePopup() {
-        val latest = _updatePopupState.value?.latestVersion ?: return
-        viewModelScope.launch {
-            localPreferencesRepository.setDismissedPopupVersion(latest)
-            _updatePopupState.value = null
-        }
-    }
-
-    fun refreshUpdateBanner(force: Boolean = true) {
-        viewModelScope.launch {
-            checkForUpdateBanner(force = force)
-        }
-    }
-
-    private suspend fun checkForUpdateBanner(force: Boolean) {
-        if (!BuildConfig.ENABLE_UPDATE_CHECK) {
-            _updateBannerState.value = null
-            _updatePopupState.value = null
-            return
-        }
-
-        val current = BuildConfig.VERSION_NAME
-        val dismissed = localPreferencesRepository.dismissedUpdateVersion.firstOrNull()
-        val dismissedPopup = localPreferencesRepository.dismissedPopupVersion.firstOrNull()
-        val lastCheckedAt = localPreferencesRepository.updateLastCheckedAt.firstOrNull()
-        val cachedLatest = localPreferencesRepository.updateAvailableVersion.firstOrNull()
-        val cachedUrl = localPreferencesRepository.updateAvailableUrl.firstOrNull()
-        val cachedChangelog = localPreferencesRepository.updateAvailableChangelog.firstOrNull()
-        val now = System.currentTimeMillis()
-
-        val cachedState = cachedLatest
-            ?.trim()
-            ?.takeIf { it.isNotEmpty() && compareVersions(it, current) > 0 && dismissed != it }
-            ?.let {
-                UpdateBannerState(
-                    latestVersion = it,
-                    currentVersion = current,
-                    updateUrl = cachedUrl?.takeIf { url -> url.isNotBlank() } ?: defaultUpdateUrl
-                )
-            }
-
-        _updateBannerState.value = cachedState
-
-        // Restore popup from cache
-        cachedLatest?.trim()
-            ?.takeIf { it.isNotEmpty() && compareVersions(it, current) > 0 && dismissed != it && dismissedPopup != it }
-            ?.let {
-                _updatePopupState.value = UpdatePopupState(
-                    latestVersion = it,
-                    changelog = cachedChangelog,
-                    updateUrl = cachedUrl?.takeIf { url -> url.isNotBlank() } ?: defaultUpdateUrl
-                )
-            }
-
-        if (!force && lastCheckedAt != null && (now - lastCheckedAt) < updateCheckIntervalMs) {
-            return
-        }
-
-        val payload = fetchUpdateManifest() ?: run {
-            return
-        }
-
-        localPreferencesRepository.setUpdateLastCheckedAt(now)
-
-        val latest = payload.latest.trim()
-        if (latest.isEmpty()) {
-            localPreferencesRepository.setAvailableUpdate(version = null, url = null, changelog = null)
-            _updateBannerState.value = null
-            _updatePopupState.value = null
-            return
-        }
-
-        val updateUrl = payload.androidUrl?.takeIf { it.isNotBlank() } ?: defaultUpdateUrl
-        val isNewer = compareVersions(latest, current) > 0
-        if (!isNewer) {
-            localPreferencesRepository.setAvailableUpdate(version = null, url = null, changelog = null)
-            _updateBannerState.value = null
-            _updatePopupState.value = null
-            return
-        }
-
-        localPreferencesRepository.setAvailableUpdate(version = latest, url = updateUrl, changelog = payload.changelog)
-        val shouldShow = dismissed != latest
-
-        _updateBannerState.value = if (shouldShow) {
-            UpdateBannerState(
-                latestVersion = latest,
-                currentVersion = current,
-                updateUrl = updateUrl
-            )
-        } else {
-            null
-        }
-
-        // Popup: only if not dismissed for this version
-        _updatePopupState.value = if (shouldShow && dismissedPopup != latest) {
-            UpdatePopupState(
-                latestVersion = latest,
-                changelog = payload.changelog,
-                updateUrl = updateUrl
-            )
-        } else {
-            null
-        }
-    }
-
-    private suspend fun fetchUpdateManifest(): UpdateManifest? = withContext(Dispatchers.IO) {
-        runCatching {
-            val connection = (URL(updateManifestUrl).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 5000
-                readTimeout = 5000
-                requestMethod = "GET"
-            }
-            try {
-                if (connection.responseCode !in 200..299) return@runCatching null
-                val body = connection.inputStream.bufferedReader().use { it.readText() }
-                val json = JSONObject(body)
-                UpdateManifest(
-                    latest = json.optString("latest"),
-                    changelog = json.optString("changelog").takeIf { it.isNotBlank() },
-                    androidUrl = json.optString("android_url").takeIf { it.isNotBlank() }
-                )
-            } finally {
-                connection.disconnect()
-            }
-        }.getOrNull()
-    }
-
-    private fun compareVersions(leftVersion: String, rightVersion: String): Int {
-        val left = leftVersion.split('.').map { it.toIntOrNull() ?: 0 }
-        val right = rightVersion.split('.').map { it.toIntOrNull() ?: 0 }
-        val maxSize = maxOf(left.size, right.size)
-        for (index in 0 until maxSize) {
-            val l = left.getOrElse(index) { 0 }
-            val r = right.getOrElse(index) { 0 }
-            if (l != r) return l.compareTo(r)
-        }
-        return 0
-    }
-
-    private data class UpdateManifest(
-        val latest: String,
-        val changelog: String?,
-        val androidUrl: String?
-    )
 }

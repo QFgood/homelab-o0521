@@ -73,7 +73,6 @@ fun SettingsScreen(
 
     val appIcon by viewModel.appIcon.collectAsStateWithLifecycle()
     val appIconApplying by viewModel.appIconApplying.collectAsStateWithLifecycle()
-    val updateBannerState by viewModel.updateBannerState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
     val homeConfiguredCount = remember(serviceOrder, instancesByType) {
         serviceOrder.count { it.isHomeService && instancesByType[it].orEmpty().isNotEmpty() }
@@ -106,67 +105,8 @@ fun SettingsScreen(
                 )
             }
 
-            updateBannerState?.let { update ->
-                item {
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.SystemUpdate,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    text = stringResource(R.string.settings_update_banner_title),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-
-                            Text(
-                                text = stringResource(
-                                    R.string.settings_update_banner_body,
-                                    update.latestVersion,
-                                    update.currentVersion
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
-                            )
-
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                FilledTonalButton(
-                                    onClick = { uriHandler.openUri(update.updateUrl) }
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.settings_update_action),
-                                        maxLines = 1
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = { viewModel.dismissUpdateBanner() }
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.settings_update_dismiss),
-                                        maxLines = 1
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+            if (BuildConfig.ENABLE_UPDATE_CHECK) {
+                item { GitHubUpdateSection() }
             }
 
             val appVersion = BuildConfig.VERSION_NAME
@@ -393,6 +333,8 @@ fun SettingsScreen(
                     onEnabledChange = viewModel::setBackgroundAlertsEnabled
                 )
             }
+
+            item { DockerPushSection() }
 
             // --- SECURITY ---
             item {

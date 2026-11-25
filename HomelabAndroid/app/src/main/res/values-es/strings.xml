@@ -1989,4 +1989,34 @@
     <string name="mediary_scout_tv">Serie</string>
     <string name="mediary_scout_anime">Anime</string>
     <string name="mediary_scout_queued">En cola</string>
+
+    <!-- GitHub updates and Docker notifications -->
+    <string name="github_update_title">Actualizaciones de GitHub</string>
+    <string name="github_update_check">Buscar actualizaciones</string>
+    <string name="github_update_checking">Consultando GitHub…</string>
+    <string name="github_update_current">Ya tienes la última versión.</string>
+    <string name="github_update_no_release">No hay un APK compatible publicado en GitHub.</string>
+    <string name="github_update_found">La actualización %1$s está disponible.</string>
+    <string name="github_update_download">Descargar APK</string>
+    <string name="github_update_downloading">Descargando y verificando el APK…</string>
+    <string name="github_update_install">Instalar actualización</string>
+    <string name="github_update_install_hint">Si Android solicita permiso, concédelo y vuelve a tocar Instalar actualización.</string>
+    <string name="github_update_error">No se pudo buscar o descargar la actualización. Inténtalo de nuevo.</string>
+    <string name="github_update_install_error">Android no pudo abrir el instalador del APK.</string>
+    <string name="github_update_incompatible">El paquete, la firma o la versión del APK no es compatible.</string>
+    <string name="docker_push_title">Notificaciones de Docker</string>
+    <string name="docker_push_connection_channel">Estado de la suscripción de Docker</string>
+    <string name="docker_push_service_running">Manteniendo activa la suscripción a ntfy</string>
+    <string name="docker_push_hint">Publica eventos de Docker en este tema de ntfy. Homelab mantiene una conexión en segundo plano mientras esté suscrito.</string>
+    <string name="docker_push_topic">URL HTTPS del tema de ntfy</string>
+    <string name="docker_push_token">Token de acceso de ntfy (opcional)</string>
+    <string name="docker_push_connect">Guardar y conectar</string>
+    <string name="docker_push_disconnect">Detener suscripción</string>
+    <string name="docker_push_stopped">Suscripción detenida</string>
+    <string name="docker_push_connecting">Conectando a ntfy…</string>
+    <string name="docker_push_connected">Conectado. Esperando mensajes de Docker.</string>
+    <string name="docker_push_reconnecting">Conexión perdida. Reconectando…</string>
+    <string name="docker_push_rejected">La suscripción falló. Comprueba la URL del tema y el token.</string>
+    <string name="docker_push_invalid_url">Introduce una URL HTTPS que termine en el nombre de un tema de ntfy.</string>
+    <string name="docker_push_error">No se pudo cambiar la suscripción de Docker.</string>
 </resources>

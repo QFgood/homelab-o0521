@@ -1989,4 +1989,34 @@
     <string name="mediary_scout_tv">Série</string>
     <string name="mediary_scout_anime">Anime</string>
     <string name="mediary_scout_queued">En attente</string>
+
+    <!-- GitHub updates and Docker notifications -->
+    <string name="github_update_title">Mises à jour GitHub</string>
+    <string name="github_update_check">Rechercher des mises à jour</string>
+    <string name="github_update_checking">Vérification sur GitHub…</string>
+    <string name="github_update_current">Vous avez la dernière version.</string>
+    <string name="github_update_no_release">Aucun APK compatible n’est publié sur GitHub.</string>
+    <string name="github_update_found">La mise à jour %1$s est disponible.</string>
+    <string name="github_update_download">Télécharger l’APK</string>
+    <string name="github_update_downloading">Téléchargement et vérification de l’APK…</string>
+    <string name="github_update_install">Installer la mise à jour</string>
+    <string name="github_update_install_hint">Si Android demande une autorisation, accordez-la puis appuyez de nouveau sur Installer la mise à jour.</string>
+    <string name="github_update_error">Impossible de rechercher ou télécharger la mise à jour. Réessayez.</string>
+    <string name="github_update_install_error">Android n’a pas pu ouvrir le programme d’installation.</string>
+    <string name="github_update_incompatible">Le paquet, le certificat ou la version de l’APK est incompatible.</string>
+    <string name="docker_push_title">Notifications Docker</string>
+    <string name="docker_push_connection_channel">État de l’abonnement Docker</string>
+    <string name="docker_push_service_running">Abonnement ntfy maintenu actif</string>
+    <string name="docker_push_hint">Publiez les événements Docker sur ce sujet ntfy. Homelab maintient la connexion en arrière-plan pendant l’abonnement.</string>
+    <string name="docker_push_topic">URL HTTPS du sujet ntfy</string>
+    <string name="docker_push_token">Jeton d’accès ntfy (facultatif)</string>
+    <string name="docker_push_connect">Enregistrer et connecter</string>
+    <string name="docker_push_disconnect">Arrêter l’abonnement</string>
+    <string name="docker_push_stopped">Abonnement arrêté</string>
+    <string name="docker_push_connecting">Connexion à ntfy…</string>
+    <string name="docker_push_connected">Connecté. En attente des messages Docker.</string>
+    <string name="docker_push_reconnecting">Connexion perdue. Reconnexion en cours…</string>
+    <string name="docker_push_rejected">L’abonnement a échoué. Vérifiez l’URL du sujet et le jeton.</string>
+    <string name="docker_push_invalid_url">Saisissez une URL HTTPS se terminant par un nom de sujet ntfy.</string>
+    <string name="docker_push_error">Impossible de modifier l’abonnement Docker.</string>
 </resources>
