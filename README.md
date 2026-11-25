@@ -42,7 +42,7 @@ There will **never be any donations**, paid tiers, subscriptions, telemetry, or 
 - **34 integrated service dashboards** across infrastructure, networking, media automation, observability, and developer tooling.
 - **One app, many instances**: add multiple instances of the same service and switch between them seamlessly.
 - **100% Native Android**: built with Kotlin, Jetpack Compose, Material 3, dynamic theming, and Kotlin Coroutines/Flow.
-- **Robust Security & Privacy**: hardware-backed Android KeyStore credential encryption (AES-256-GCM), PBKDF2 PIN protection, screenshot protection (`FLAG_SECURE`), and strict default HTTPS.
+- **Robust Security & Privacy**: hardware-backed Android KeyStore credential encryption (AES-256-GCM), PBKDF2 PIN protection, and strict default HTTPS.
 - **Practical daily-use features**: encrypted local backup and restore, biometric unlock (Fingerprint / Face Unlock), multilingual UI, and in-app update checks.
 - **Utilities beyond services**: built-in bookmarks plus quick Tailscale launch support for remote access workflows.
 
