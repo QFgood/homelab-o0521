@@ -63,7 +63,7 @@ fun ProxmoxNodeDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Node: $node") },
+                title = { Text(stringResource(R.string.proxmox_node_value, node)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -101,7 +101,7 @@ fun ProxmoxNodeDetailScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
@@ -130,24 +130,24 @@ fun ProxmoxNodeDetailScreen(
                             ) {
                                 Column(Modifier.padding(16.dp)) {
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                        Text("Status", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.proxmox_status), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                                         Text(data.status.pveversion ?: "-", fontSize = 11.sp, color = Color.Gray)
                                     }
                                     Spacer(Modifier.height(12.dp))
 
                                     // Uptime
-                                    InfoRow(label = "Uptime", value = data.status.formattedUptime)
+                                    InfoRow(label = stringResource(R.string.proxmox_uptime), value = data.status.formattedUptime)
                                     HorizontalDivider(Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.15f))
 
                                     // Kernel
                                     if (!data.status.kversion.isNullOrBlank()) {
-                                        InfoRow(label = "Kernel", value = data.status.kversion)
+                                        InfoRow(label = stringResource(R.string.proxmox_kernel), value = data.status.kversion)
                                         HorizontalDivider(Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.15f))
                                     }
 
                                     // CPUs
                                     if (data.status.cpus != null) {
-                                        InfoRow(label = "CPUs", value = "${data.status.cpus}")
+                                        InfoRow(label = stringResource(R.string.proxmox_cpus), value = "${data.status.cpus}")
                                         HorizontalDivider(Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.15f))
                                     }
 
@@ -157,11 +157,11 @@ fun ProxmoxNodeDetailScreen(
                                     ProgressBar(label = "RAM", percent = data.status.memPercent, color = Color.Blue, detail = formatBytes(data.status.mem ?: 0L) + " / " + formatBytes(data.status.maxmem ?: 0L))
                                     Spacer(Modifier.height(8.dp))
                                     if ((data.status.maxswap ?: 0) > 0) {
-                                        ProgressBar(label = "Swap", percent = data.status.swapPercent, color = Color(0xFFFF9800), detail = formatBytes(data.status.swap ?: 0L) + " / " + formatBytes(data.status.maxswap ?: 0L))
+                                        ProgressBar(label = stringResource(R.string.proxmox_swap), percent = data.status.swapPercent, color = Color(0xFFFF9800), detail = formatBytes(data.status.swap ?: 0L) + " / " + formatBytes(data.status.maxswap ?: 0L))
                                         Spacer(Modifier.height(8.dp))
                                     }
                                     data.status.rootfs?.let { rootfs ->
-                                        ProgressBar(label = "RootFS", percent = data.status.rootfsPercent, color = Color(0xFF9C27B0), detail = formatBytes(rootfs.used ?: 0L) + " / " + formatBytes(rootfs.total ?: 0L))
+                                        ProgressBar(label = stringResource(R.string.proxmox_rootfs), percent = data.status.rootfsPercent, color = Color(0xFF9C27B0), detail = formatBytes(rootfs.used ?: 0L) + " / " + formatBytes(rootfs.total ?: 0L))
                                     }
 
                                     Spacer(Modifier.height(12.dp))
@@ -178,7 +178,7 @@ fun ProxmoxNodeDetailScreen(
                                         ) {
                                             Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
                                             Spacer(Modifier.width(6.dp))
-                                            Text("Updates", fontSize = 12.sp)
+                                            Text(stringResource(R.string.proxmox_updates_label), fontSize = 12.sp)
                                         }
                                         OutlinedButton(
                                             onClick = { onNavigateToCeph(node) },
@@ -190,7 +190,7 @@ fun ProxmoxNodeDetailScreen(
                                         ) {
                                             Icon(Icons.Default.Storage, contentDescription = null, modifier = Modifier.size(16.dp))
                                             Spacer(Modifier.width(6.dp))
-                                            Text("Ceph", fontSize = 12.sp)
+                                            Text(stringResource(R.string.proxmox_ceph), fontSize = 12.sp)
                                         }
                                         OutlinedButton(
                                             onClick = { onNavigateToNetwork(node) },
@@ -202,7 +202,7 @@ fun ProxmoxNodeDetailScreen(
                                         ) {
                                             Icon(Icons.Default.Lan, contentDescription = null, modifier = Modifier.size(16.dp))
                                             Spacer(Modifier.width(6.dp))
-                                            Text("Network", fontSize = 12.sp)
+                                            Text(stringResource(R.string.proxmox_network_config), fontSize = 12.sp)
                                         }
                                     }
                                 }
@@ -212,7 +212,7 @@ fun ProxmoxNodeDetailScreen(
                         // VMs Section
                         if (data.vms.isNotEmpty()) {
                             item {
-                                Text("Virtual Machines (${data.vms.size})", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(stringResource(R.string.proxmox_vms_count, data.vms.size), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                             }
                             items(data.vms, key = { it.vmid }) { vm ->
                                 GuestRowCard(vm = vm, lxc = null, node = node, isQemu = true, color = serviceColor, isDark = isDark, onNavigate = { onNavigateToGuest(node, vm.vmid, true) })
@@ -222,7 +222,7 @@ fun ProxmoxNodeDetailScreen(
                         // LXCs Section
                         if (data.lxcs.isNotEmpty()) {
                             item {
-                                Text("Containers (${data.lxcs.size})", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(stringResource(R.string.proxmox_containers_count, data.lxcs.size), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                             }
                             items(data.lxcs, key = { it.vmid }) { lxc ->
                                 GuestRowCard(vm = null, lxc = lxc, node = node, isQemu = false, color = Color(0xFF4CAF50), isDark = isDark, onNavigate = { onNavigateToGuest(node, lxc.vmid, false) })
@@ -231,12 +231,12 @@ fun ProxmoxNodeDetailScreen(
 
                         // Tasks Section
                         item {
-                            Text("Recent Tasks (${data.tasks.size})", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.proxmox_recent_tasks_count, data.tasks.size), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         }
                         if (data.tasks.isEmpty()) {
                             item {
                                 Card(modifier = Modifier.fillMaxWidth()) {
-                                    Text("No recent tasks", Modifier.padding(16.dp), color = Color.Gray)
+                                    Text(stringResource(R.string.proxmox_no_recent_tasks), Modifier.padding(16.dp), color = Color.Gray)
                                 }
                             }
                         } else {

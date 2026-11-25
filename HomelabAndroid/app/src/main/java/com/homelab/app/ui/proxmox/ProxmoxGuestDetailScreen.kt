@@ -41,11 +41,11 @@ import kotlinx.coroutines.launch
 private fun proxmoxCardColor(isDarkTheme: Boolean, accent: Color): Color =
     accent.copy(alpha = if (isDarkTheme) 0.07f else 0.08f)
 
-private enum class GuestTab(val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
-    OVERVIEW("Overview", Icons.Default.Info),
-    SNAPSHOTS("Snapshots", Icons.Default.PhotoCamera),
-    CONSOLE("Console", Icons.Default.DesktopWindows),
-    LOGS("Logs", Icons.AutoMirrored.Filled.ListAlt)
+private enum class GuestTab(@androidx.annotation.StringRes val labelRes: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
+    OVERVIEW(R.string.proxmox_overview, Icons.Default.Info),
+    SNAPSHOTS(R.string.proxmox_snapshots, Icons.Default.PhotoCamera),
+    CONSOLE(R.string.proxmox_console, Icons.Default.DesktopWindows),
+    LOGS(R.string.proxmox_logs, Icons.AutoMirrored.Filled.ListAlt)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,12 +149,14 @@ fun ProxmoxGuestDetailScreen(
                         IconButton(onClick = { viewModel.toggleFavorite(node, vmid, isQemu) }) {
                             Icon(
                                 if (isFav) Icons.Default.Star else Icons.Outlined.StarBorder,
-                                contentDescription = if (isFav) "Remove from favorites" else "Add to favorites",
+                                contentDescription = stringResource(
+                                    if (isFav) R.string.proxmox_remove_favorite else R.string.proxmox_add_favorite
+                                ),
                                 tint = if (isFav) Color(0xFFFFC107) else Color.Gray
                             )
                         }
                         IconButton(onClick = { viewModel.fetchGuestDetail(node, vmid, isQemu) }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                         }
                     }
                 )
@@ -166,7 +168,7 @@ fun ProxmoxGuestDetailScreen(
                         Tab(
                             selected = selectedTabIndex == index,
                             onClick = { selectedTabIndex = index },
-                            text = { Text(tab.label, fontSize = 12.sp) },
+                            text = { Text(stringResource(tab.labelRes), fontSize = 12.sp) },
                             icon = { Icon(tab.icon, contentDescription = null, modifier = Modifier.size(18.dp)) }
                         )
                     }
@@ -194,7 +196,7 @@ fun ProxmoxGuestDetailScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
@@ -268,13 +270,13 @@ fun ProxmoxGuestDetailScreen(
         if (showCreateSnapshotDialog) {
             AlertDialog(
                 onDismissRequest = { showCreateSnapshotDialog = false },
-                title = { Text("Create Snapshot") },
+                title = { Text(stringResource(R.string.proxmox_snapshot_create)) },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = snapshotName,
                             onValueChange = { snapshotName = it },
-                            label = { Text("Snapshot Name") },
+                            label = { Text(stringResource(R.string.proxmox_snapshot_name)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -282,7 +284,7 @@ fun ProxmoxGuestDetailScreen(
                         OutlinedTextField(
                             value = snapshotDescription,
                             onValueChange = { snapshotDescription = it },
-                            label = { Text("Description") },
+                            label = { Text(stringResource(R.string.proxmox_description)) },
                             modifier = Modifier.fillMaxWidth(),
                             maxLines = 3
                         )
@@ -300,7 +302,7 @@ fun ProxmoxGuestDetailScreen(
                         },
                         enabled = snapshotName.isNotBlank()
                     ) {
-                        Text("Create")
+                        Text(stringResource(R.string.proxmox_create))
                     }
                 },
                 dismissButton = {
@@ -309,7 +311,7 @@ fun ProxmoxGuestDetailScreen(
                         snapshotName = ""
                         snapshotDescription = ""
                     }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -319,13 +321,13 @@ fun ProxmoxGuestDetailScreen(
         if (showCloneDialog) {
             AlertDialog(
                 onDismissRequest = { showCloneDialog = false },
-                title = { Text("Clone ${if (isQemu) "VM" else "CT"} $vmid") },
+                title = { Text(stringResource(R.string.proxmox_clone_guest_title, if (isQemu) "VM" else "CT", vmid)) },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = cloneNewId,
                             onValueChange = { cloneNewId = it.filter { c -> c.isDigit() } },
-                            label = { Text("New ID") },
+                            label = { Text(stringResource(R.string.proxmox_new_id)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -333,20 +335,20 @@ fun ProxmoxGuestDetailScreen(
                         OutlinedTextField(
                             value = cloneName,
                             onValueChange = { cloneName = it },
-                            label = { Text("Name") },
+                            label = { Text(stringResource(R.string.proxmox_name)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
                         Spacer(Modifier.height(8.dp))
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                            Text("Full Clone", fontSize = 14.sp)
+                            Text(stringResource(R.string.proxmox_full_clone), fontSize = 14.sp)
                             Checkbox(checked = cloneFullClone, onCheckedChange = { cloneFullClone = it })
                         }
                         Spacer(Modifier.height(4.dp))
                         OutlinedTextField(
                             value = cloneTargetNode,
                             onValueChange = { cloneTargetNode = it },
-                            label = { Text("Target Node (optional)") },
+                            label = { Text(stringResource(R.string.proxmox_target_node)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -354,7 +356,7 @@ fun ProxmoxGuestDetailScreen(
                         OutlinedTextField(
                             value = cloneTargetStorage,
                             onValueChange = { cloneTargetStorage = it },
-                            label = { Text("Target Storage (optional)") },
+                            label = { Text(stringResource(R.string.proxmox_target_storage)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -389,12 +391,12 @@ fun ProxmoxGuestDetailScreen(
                         },
                         enabled = cloneNewId.isNotBlank() && cloneName.isNotBlank()
                     ) {
-                        Text("Clone")
+                        Text(stringResource(R.string.proxmox_clone))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showCloneDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -404,20 +406,20 @@ fun ProxmoxGuestDetailScreen(
         if (showMigrateDialog) {
             AlertDialog(
                 onDismissRequest = { showMigrateDialog = false },
-                title = { Text("Migrate ${if (isQemu) "VM" else "CT"} $vmid") },
+                title = { Text(stringResource(R.string.proxmox_migrate_guest_title, if (isQemu) "VM" else "CT", vmid)) },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = migrateTargetNode,
                             onValueChange = { migrateTargetNode = it },
-                            label = { Text("Target Node") },
+                            label = { Text(stringResource(R.string.proxmox_target_node_required)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
                         if (isQemu) {
                             Spacer(Modifier.height(8.dp))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                Text("Online Migration", fontSize = 14.sp)
+                                Text(stringResource(R.string.proxmox_online_migration), fontSize = 14.sp)
                                 Checkbox(checked = migrateOnline, onCheckedChange = { migrateOnline = it })
                             }
                         }
@@ -445,12 +447,12 @@ fun ProxmoxGuestDetailScreen(
                         },
                         enabled = migrateTargetNode.isNotBlank()
                     ) {
-                        Text("Migrate")
+                        Text(stringResource(R.string.proxmox_migrate))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showMigrateDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -460,13 +462,13 @@ fun ProxmoxGuestDetailScreen(
         if (showEditNotesDialog) {
             AlertDialog(
                 onDismissRequest = { showEditNotesDialog = false },
-                title = { Text("Edit Notes - ${if (isQemu) "VM" else "CT"} $vmid") },
+                title = { Text(stringResource(R.string.proxmox_edit_notes_guest_title, if (isQemu) "VM" else "CT", vmid)) },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = editNotesText,
                             onValueChange = { editNotesText = it },
-                            label = { Text("Notes / Description") },
+                            label = { Text(stringResource(R.string.proxmox_notes)) },
                             modifier = Modifier.fillMaxWidth(),
                             maxLines = 8,
                             minLines = 4
@@ -486,12 +488,12 @@ fun ProxmoxGuestDetailScreen(
                             }
                         }
                     ) {
-                        Text("Save")
+                        Text(stringResource(R.string.save))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showEditNotesDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -501,11 +503,11 @@ fun ProxmoxGuestDetailScreen(
         cloneSuccessMessage?.let { msg ->
             AlertDialog(
                 onDismissRequest = { cloneSuccessMessage = null },
-                title = { Text("Task Started") },
-                text = { Text("Clone/Migrate task started: $msg") },
+                title = { Text(stringResource(R.string.proxmox_task_started_title)) },
+                text = { Text(stringResource(R.string.proxmox_task_started, msg)) },
                 confirmButton = {
                     TextButton(onClick = { cloneSuccessMessage = null }) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok))
                     }
                 }
             )
@@ -513,11 +515,11 @@ fun ProxmoxGuestDetailScreen(
         cloneErrorMessage?.let { msg ->
             AlertDialog(
                 onDismissRequest = { cloneErrorMessage = null },
-                title = { Text("Error") },
+                title = { Text(stringResource(R.string.error)) },
                 text = { Text(msg, color = Color.Red) },
                 confirmButton = {
                     TextButton(onClick = { cloneErrorMessage = null }) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok))
                     }
                 }
             )
@@ -572,7 +574,7 @@ private fun GuestOverviewTab(
                                 Spacer(Modifier.width(10.dp))
                                 Column {
                                     Text(data.name, fontSize = 18.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                                    Text("Node: $node", fontSize = 11.sp, color = Color.Gray)
+                                    Text(stringResource(R.string.proxmox_node_value, node), fontSize = 11.sp, color = Color.Gray)
                                 }
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -584,7 +586,13 @@ private fun GuestOverviewTab(
                                 )
                                 Spacer(Modifier.width(6.dp))
                                 Text(
-                                    if (data.isRunning) "Running" else if (data.isStopped) "Stopped" else "Unknown",
+                                    stringResource(
+                                        when {
+                                            data.isRunning -> R.string.proxmox_running
+                                            data.isStopped -> R.string.proxmox_stopped
+                                            else -> R.string.proxmox_unknown_status
+                                        }
+                                    ),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = if (data.isRunning) Color.Green else if (data.isStopped) Color.Red else Color.Gray
@@ -593,7 +601,7 @@ private fun GuestOverviewTab(
                         }
                         Spacer(Modifier.height(8.dp))
                         if (data.uptime != "-") {
-                            Text("Uptime: ${data.uptime}", fontSize = 11.sp, color = Color.Gray)
+                            Text(stringResource(R.string.proxmox_uptime_value, data.uptime), fontSize = 11.sp, color = Color.Gray)
                         }
                     }
                 }
@@ -606,13 +614,13 @@ private fun GuestOverviewTab(
                     colors = CardDefaults.cardColors(containerColor = proxmoxCardColor(isDark, guestColor))
                 ) {
                     Column(Modifier.padding(16.dp)) {
-                        Text("Resources", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.proxmox_resources), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(12.dp))
                         ProgressBar(label = "CPU", percent = data.cpuPercent, color = guestColor)
                         Spacer(Modifier.height(10.dp))
                         ProgressBar(label = "RAM", percent = data.memPercent, color = Color.Blue)
                         Spacer(Modifier.height(10.dp))
-                        ProgressBar(label = "Disk", percent = data.diskPercent, color = Color(0xFF9C27B0))
+                        ProgressBar(label = stringResource(R.string.proxmox_disk_label), percent = data.diskPercent, color = Color(0xFF9C27B0))
                     }
                 }
             }
@@ -625,7 +633,7 @@ private fun GuestOverviewTab(
                         colors = CardDefaults.cardColors(containerColor = proxmoxCardColor(isDark, guestColor))
                     ) {
                         Column(Modifier.padding(16.dp)) {
-                            Text("Actions", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.proxmox_actions), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(8.dp))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 if (data.isStopped) {
@@ -673,12 +681,12 @@ private fun GuestOverviewTab(
                         colors = CardDefaults.cardColors(containerColor = proxmoxCardColor(isDark, guestColor))
                     ) {
                         Column(Modifier.padding(16.dp)) {
-                            Text("Tools", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.proxmox_tools), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(8.dp))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 if (onNavigateToConsole != null) {
                                     ActionButton(
-                                        label = "Console",
+                                        label = stringResource(R.string.proxmox_console),
                                         icon = Icons.Default.DesktopWindows,
                                         color = guestColor,
                                         onClick = { onNavigateToConsole(node, data.vmid, isQemu) },
@@ -687,7 +695,7 @@ private fun GuestOverviewTab(
                                 }
                                 if (onNavigateToConfig != null) {
                                     ActionButton(
-                                        label = "Edit Config",
+                                        label = stringResource(R.string.proxmox_edit_config),
                                         icon = Icons.Default.Settings,
                                         color = Color(0xFF607D8B),
                                         onClick = { onNavigateToConfig(node, data.vmid, isQemu) },
@@ -698,14 +706,14 @@ private fun GuestOverviewTab(
                             Spacer(Modifier.height(8.dp))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 ActionButton(
-                                    label = "Clone",
+                                    label = stringResource(R.string.proxmox_clone),
                                     icon = Icons.Default.ContentCopy,
                                     color = Color(0xFF9C27B0),
                                     onClick = onCloneClick,
                                     modifier = Modifier.weight(1f)
                                 )
                                 ActionButton(
-                                    label = "Migrate",
+                                    label = stringResource(R.string.proxmox_migrate),
                                     icon = Icons.Default.SwapHoriz,
                                     color = Color(0xFF00BCD4),
                                     onClick = onMigrateClick,
@@ -715,7 +723,7 @@ private fun GuestOverviewTab(
                             Spacer(Modifier.height(8.dp))
                             Row(Modifier.fillMaxWidth()) {
                                 ActionButton(
-                                    label = "Edit Notes",
+                                    label = stringResource(R.string.proxmox_edit_notes),
                                     icon = Icons.Default.EditNote,
                                     color = Color(0xFF795548),
                                     onClick = onEditNotesClick,
@@ -757,16 +765,16 @@ private fun GuestSnapshotsTab(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Snapshots (${snapshots.size})", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.proxmox_snapshots_count, snapshots.size), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     TextButton(onClick = onCreateSnapshot) {
-                        Text("Create", fontSize = 12.sp, color = guestColor)
+                        Text(stringResource(R.string.proxmox_create), fontSize = 12.sp, color = guestColor)
                     }
                 }
             }
             if (snapshots.isEmpty()) {
                 item {
                     Card(modifier = Modifier.fillMaxWidth()) {
-                        Text("No snapshots", Modifier.padding(16.dp), color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_snapshots), Modifier.padding(16.dp), color = Color.Gray)
                     }
                 }
             } else {
@@ -820,7 +828,7 @@ private fun GuestConsoleTab(
                 TextButton(onClick = { onNavigateToFullConsole(node, vmid, isQemu) }) {
                     Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Open Full Console")
+                    Text(stringResource(R.string.proxmox_open_full_console))
                 }
             }
         }
@@ -834,7 +842,7 @@ private fun GuestConsoleTab(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(16.dp))
-                            Text("Fetching VNC ticket...", color = Color.Gray)
+                            Text(stringResource(R.string.proxmox_fetched_vnc), color = Color.Gray)
                         }
                     }
                 }
@@ -853,7 +861,7 @@ private fun GuestConsoleTab(
                         Button(onClick = { viewModel.fetchVncTicket(node, vmid, isQemu) }) {
                             Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -868,16 +876,16 @@ private fun GuestConsoleTab(
                         ) {
                             Icon(Icons.Default.Warning, contentDescription = null, tint = Color(0xFFFF9800), modifier = Modifier.size(48.dp))
                             Spacer(Modifier.height(16.dp))
-                            Text("SSL Certificate Error", color = Color(0xFFFF9800), fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.proxmox_ssl_error), color = Color(0xFFFF9800), fontSize = 18.sp, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                "The WebView could not verify the server's SSL certificate.",
+                                stringResource(R.string.proxmox_ssl_error_desc),
                                 color = Color.Gray,
                                 fontSize = 14.sp
                             )
                             Spacer(Modifier.height(24.dp))
                             Button(onClick = { viewModel.fetchVncTicket(node, vmid, isQemu); sslError = false }) {
-                                Text("Retry")
+                                Text(stringResource(R.string.retry))
                             }
                         }
                     } else if (loadingError != null) {
@@ -888,12 +896,12 @@ private fun GuestConsoleTab(
                         ) {
                             Icon(Icons.Default.Error, contentDescription = null, tint = Color.Red, modifier = Modifier.size(48.dp))
                             Spacer(Modifier.height(16.dp))
-                            Text("Failed to load console", color = Color.Red, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.proxmox_console_failed), color = Color.Red, fontSize = 18.sp, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(8.dp))
                             Text(loadingError!!, color = Color.Gray, fontSize = 14.sp)
                             Spacer(Modifier.height(24.dp))
                             Button(onClick = { viewModel.fetchVncTicket(node, vmid, isQemu); loadingError = null }) {
-                                Text("Retry")
+                                Text(stringResource(R.string.retry))
                             }
                         }
                     } else {
@@ -1002,7 +1010,7 @@ private fun GuestLogsTab(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Task Log", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Text(stringResource(R.string.proxmox_task_log_title), fontSize = 14.sp, fontWeight = FontWeight.Medium)
         }
         Spacer(Modifier.height(12.dp))
 
@@ -1024,7 +1032,9 @@ private fun GuestLogsTab(
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "View the full task log for this ${if (isQemu) "VM" else "container"}.",
+                    stringResource(
+                        if (isQemu) R.string.proxmox_task_log_vm_description else R.string.proxmox_task_log_container_description
+                    ),
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -1032,10 +1042,10 @@ private fun GuestLogsTab(
                 if (onNavigateToTaskLog != null) {
                     // Note: Task log navigation requires a valid UPID. 
                     // This button navigates to the task list for the current node where user can select a specific task.
-                    Text("Task log available for running/recent tasks", color = Color.Gray, fontSize = 11.sp)
+                    Text(stringResource(R.string.proxmox_task_log_available), color = Color.Gray, fontSize = 11.sp)
                 } else {
                     Text(
-                        "Task log navigation not available",
+                        stringResource(R.string.proxmox_task_log_unavailable),
                         color = Color.Gray,
                         fontSize = 12.sp
                     )
@@ -1121,14 +1131,14 @@ private fun SnapshotRow(
                     Text(snapshot.formattedTime, fontSize = 9.sp, color = Color.Gray)
                 }
                 if (snapshot.vmstate == 1) {
-                    Text("RAM", fontSize = 9.sp, color = Color.Blue, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.proxmox_ram), fontSize = 9.sp, color = Color.Blue, fontWeight = FontWeight.Medium)
                 }
                 Spacer(Modifier.width(4.dp))
                 IconButton(onClick = { showRollbackConfirm = true }, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Default.RestartAlt, contentDescription = "Rollback", tint = Color(0xFFFF9800), modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.RestartAlt, contentDescription = stringResource(R.string.proxmox_rollback), tint = Color(0xFFFF9800), modifier = Modifier.size(16.dp))
                 }
                 IconButton(onClick = { showDeleteConfirm = true }, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete), tint = Color.Red, modifier = Modifier.size(16.dp))
                 }
             }
         }
@@ -1137,19 +1147,19 @@ private fun SnapshotRow(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete Snapshot") },
-            text = { Text("Are you sure you want to delete snapshot '${snapshot.name}'?") },
+            title = { Text(stringResource(R.string.proxmox_delete_snapshot)) },
+            text = { Text(stringResource(R.string.proxmox_delete_snapshot_confirm, snapshot.name)) },
             confirmButton = {
                 TextButton(onClick = {
                     onDelete()
                     showDeleteConfirm = false
                 }) {
-                    Text("Delete", color = Color.Red)
+                    Text(stringResource(R.string.delete), color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -1158,19 +1168,19 @@ private fun SnapshotRow(
     if (showRollbackConfirm) {
         AlertDialog(
             onDismissRequest = { showRollbackConfirm = false },
-            title = { Text("Rollback Snapshot") },
-            text = { Text("Are you sure you want to rollback to snapshot '${snapshot.name}'? This will restart the VM.") },
+            title = { Text(stringResource(R.string.proxmox_rollback_snapshot)) },
+            text = { Text(stringResource(R.string.proxmox_rollback_confirm, snapshot.name)) },
             confirmButton = {
                 TextButton(onClick = {
                     onRollback()
                     showRollbackConfirm = false
                 }) {
-                    Text("Rollback", color = Color(0xFFFF9800))
+                    Text(stringResource(R.string.proxmox_rollback), color = Color(0xFFFF9800))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showRollbackConfirm = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )

@@ -63,12 +63,12 @@ fun ProxmoxBackupScreen(
                 title = { Text(stringResource(R.string.proxmox_backup_jobs)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -235,7 +235,7 @@ private fun BackupJobCard(
             ) {
                 Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("Run Now", fontSize = 12.sp)
+                Text(stringResource(R.string.proxmox_run_now), fontSize = 12.sp)
             }
         }
     }

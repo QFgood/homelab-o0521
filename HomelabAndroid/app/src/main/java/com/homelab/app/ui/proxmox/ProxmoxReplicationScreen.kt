@@ -65,12 +65,12 @@ fun ProxmoxReplicationScreen(
                 title = { Text(stringResource(R.string.proxmox_replication)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -95,7 +95,7 @@ fun ProxmoxReplicationScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
@@ -105,7 +105,7 @@ fun ProxmoxReplicationScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(Icons.Default.Sync, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(48.dp))
                                 Spacer(Modifier.height(16.dp))
-                                Text("No replication jobs configured", color = Color.Gray, fontSize = 14.sp)
+                                Text(stringResource(R.string.proxmox_no_replication), color = Color.Gray, fontSize = 14.sp)
                             }
                         }
                     } else {
@@ -119,7 +119,7 @@ fun ProxmoxReplicationScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("Jobs (${jobs.size})", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(R.string.proxmox_jobs_count, jobs.size), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                                 }
                             }
                             items(jobs, key = { it.id ?: "unknown" }) { job ->
@@ -203,7 +203,7 @@ private fun ReplicationJobCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Source", fontSize = 11.sp, color = Color.Gray)
+                    Text(stringResource(R.string.proxmox_source), fontSize = 11.sp, color = Color.Gray)
                     Spacer(Modifier.width(4.dp))
                     Text(job.source ?: "-", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }
@@ -214,7 +214,7 @@ private fun ReplicationJobCard(
                     modifier = Modifier.size(16.dp)
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Target", fontSize = 11.sp, color = Color.Gray)
+                    Text(stringResource(R.string.proxmox_target), fontSize = 11.sp, color = Color.Gray)
                     Spacer(Modifier.width(4.dp))
                     Text(job.target ?: "-", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }

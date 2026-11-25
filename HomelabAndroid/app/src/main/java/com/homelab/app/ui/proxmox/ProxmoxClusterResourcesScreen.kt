@@ -99,12 +99,12 @@ fun ProxmoxClusterResourcesScreen(
                 title = { Text(stringResource(R.string.proxmox_cluster_resources)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -134,7 +134,7 @@ fun ProxmoxClusterResourcesScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(Icons.Default.Dns, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(48.dp))
                                 Spacer(Modifier.height(8.dp))
-                                Text("No cluster resources found", color = Color.Gray, fontSize = 14.sp)
+                                Text(stringResource(R.string.proxmox_no_cluster_resources), color = Color.Gray, fontSize = 14.sp)
                             }
                         }
                     } else {
@@ -178,7 +178,17 @@ fun ProxmoxClusterResourcesScreen(
                                             )
                                             Spacer(Modifier.width(6.dp))
                                             Text(
-                                                text = "$type (${items.size})",
+                                                text = stringResource(
+                                                    R.string.proxmox_resource_group,
+                                                    when (type) {
+                                                        "Node" -> stringResource(R.string.proxmox_node)
+                                                        "VM" -> stringResource(R.string.proxmox_resource_vm)
+                                                        "Container" -> stringResource(R.string.proxmox_resource_container)
+                                                        "Storage" -> stringResource(R.string.proxmox_storage)
+                                                        else -> type
+                                                    },
+                                                    items.size
+                                                ),
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.Medium
                                             )
@@ -187,7 +197,7 @@ fun ProxmoxClusterResourcesScreen(
                                         val runningCount = items.count { it.isRunning }
                                         if (runningCount > 0 && type != "Storage" && type != "Node") {
                                             Text(
-                                                "$runningCount/${items.size} running",
+                                                stringResource(R.string.proxmox_resources_running_count, runningCount, items.size),
                                                 fontSize = 11.sp,
                                                 color = Color.Green
                                             )
@@ -266,7 +276,7 @@ private fun ClusterResourceCard(
                     }
                     if (resource.node != null && !resource.isNode) {
                         Spacer(Modifier.width(6.dp))
-                        Text("on ${resource.node}", fontSize = 10.sp, color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_on_node, resource.node), fontSize = 10.sp, color = Color.Gray)
                     }
                 }
             }

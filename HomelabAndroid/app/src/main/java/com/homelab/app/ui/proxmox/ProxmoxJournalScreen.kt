@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.homelab.app.data.remote.dto.proxmox.ProxmoxJournalLine
@@ -76,15 +77,15 @@ fun ProxmoxJournalScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("System Journal: $node") },
+                title = { Text(stringResource(R.string.proxmox_journal_title, node)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -139,7 +140,7 @@ fun ProxmoxJournalScreen(
                     }
                     is UiState.Offline -> {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("No internet connection", color = Color.Gray)
+                            Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                         }
                     }
                 }

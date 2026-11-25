@@ -79,13 +79,14 @@ class ServiceAlertWorker @AssistedInject constructor(
         )
     }
 
-    private fun notify(
+    private suspend fun notify(
         alerts: List<ServiceAlert>,
         instancesById: Map<String, ServiceInstance>,
         appIcon: AppIconOption
     ) {
         if (alerts.isEmpty()) return
-        NotificationHelper.createChannels(applicationContext)
+        val context = preferences.languageMode.first().localizedContext(applicationContext)
+        NotificationHelper.createChannels(context)
         alerts.forEach { alert ->
             val instance = instancesById[alert.instanceId] ?: return@forEach
             val name = displayName(instance)
@@ -93,10 +94,10 @@ class ServiceAlertWorker @AssistedInject constructor(
             val titleRes = if (critical) R.string.alerts_service_down_title else R.string.alerts_service_recovered_title
             val textRes = if (critical) R.string.alerts_service_down_text else R.string.alerts_service_recovered_text
             NotificationHelper.notifyServiceAlert(
-                context = applicationContext,
+                context = context,
                 instanceId = instance.id,
-                title = applicationContext.getString(titleRes, name),
-                text = applicationContext.getString(textRes, instance.type.displayName),
+                title = context.getString(titleRes, name),
+                text = context.getString(textRes, instance.type.displayName),
                 critical = critical,
                 largeIconRes = appIcon.previewDrawableRes
             )
