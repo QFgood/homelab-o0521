@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.homelab.app.data.remote.dto.proxmox.ProxmoxTaskLogEntry
@@ -66,7 +67,7 @@ fun ProxmoxTaskLogScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text("Task Log")
+                        Text(stringResource(R.string.proxmox_task_log_title))
                         val task = (taskStatusState as? UiState.Success)?.data
                         if (task != null) {
                             Text(
@@ -79,7 +80,7 @@ fun ProxmoxTaskLogScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -100,14 +101,14 @@ fun ProxmoxTaskLogScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
                     val logEntries = state.data
                     if (logEntries.isEmpty()) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("No log entries", color = Color.Gray)
+                            Text(stringResource(R.string.proxmox_no_log_entries), color = Color.Gray)
                         }
                     } else {
                         LazyColumn(

@@ -67,7 +67,7 @@ fun ProxmoxNetworkScreen(
         topBar = {
             TopAppBar(
                 title = { Column {
-                    Text("Network Configuration")
+                    Text(stringResource(R.string.proxmox_network_configuration))
                     Text(node, fontSize = 12.sp, color = Color.Gray)
                 } },
                 navigationIcon = {
@@ -77,7 +77,7 @@ fun ProxmoxNetworkScreen(
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -108,7 +108,7 @@ fun ProxmoxNetworkScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {

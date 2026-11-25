@@ -125,17 +125,21 @@ fun ProxmoxGuestCreateScreen(
         }
     }
 
+    val nodeRequired = stringResource(R.string.proxmox_node_required)
+    val vmidRequired = stringResource(R.string.proxmox_vmid_required)
+    val nameRequired = stringResource(R.string.proxmox_name_required)
+
     fun createGuest() {
         if (selectedNode.isBlank()) {
-            createError = "Node is required"
+            createError = nodeRequired
             return
         }
         if (vmid.isBlank()) {
-            createError = "VMID is required"
+            createError = vmidRequired
             return
         }
         if (name.isBlank()) {
-            createError = "Name is required"
+            createError = nameRequired
             return
         }
 
@@ -189,7 +193,7 @@ fun ProxmoxGuestCreateScreen(
                 title = { Text(stringResource(R.string.proxmox_guest_create)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
@@ -214,7 +218,7 @@ fun ProxmoxGuestCreateScreen(
                         )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Guest Type", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(stringResource(R.string.proxmox_guest_type), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             Spacer(Modifier.height(8.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -223,13 +227,13 @@ fun ProxmoxGuestCreateScreen(
                                 FilterChip(
                                     selected = isQemu,
                                     onClick = { isQemu = true },
-                                    label = { Text("VM (QEMU)") },
+                                    label = { Text(stringResource(R.string.proxmox_vm_qemu)) },
                                     modifier = Modifier.weight(1f)
                                 )
                                 FilterChip(
                                     selected = !isQemu,
                                     onClick = { isQemu = false },
-                                    label = { Text("Container (LXC)") },
+                                    label = { Text(stringResource(R.string.proxmox_container_lxc)) },
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -246,13 +250,13 @@ fun ProxmoxGuestCreateScreen(
                         )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Basics", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(stringResource(R.string.proxmox_basics), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             Spacer(Modifier.height(12.dp))
 
                             OutlinedTextField(
                                 value = selectedNode,
                                 onValueChange = { selectedNode = it },
-                                label = { Text("Node") },
+                                label = { Text(stringResource(R.string.proxmox_node)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true
                             )
@@ -277,7 +281,7 @@ fun ProxmoxGuestCreateScreen(
                                 ) {
                                     Icon(Icons.Default.AutoFixHigh, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(4.dp))
-                                    Text("Next ID")
+                                    Text(stringResource(R.string.proxmox_next_id))
                                 }
                             }
                             Spacer(Modifier.height(8.dp))
@@ -285,7 +289,7 @@ fun ProxmoxGuestCreateScreen(
                             OutlinedTextField(
                                 value = name,
                                 onValueChange = { name = it },
-                                label = { Text("Name") },
+                                label = { Text(stringResource(R.string.proxmox_name)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true
                             )
@@ -303,7 +307,7 @@ fun ProxmoxGuestCreateScreen(
                                     "w2k8" to "Microsoft Windows Vista/2008",
                                     "wxp" to "Microsoft Windows XP/2003",
                                     "w2k" to "Microsoft Windows 2000",
-                                    "other" to "Other"
+                                    "other" to stringResource(R.string.proxmox_other_os)
                                 )
 
                                 ExposedDropdownMenuBox(
@@ -314,7 +318,7 @@ fun ProxmoxGuestCreateScreen(
                                         value = osOptions.find { it.first == ostype }?.second ?: ostype,
                                         onValueChange = {},
                                         readOnly = true,
-                                        label = { Text("OS Type") },
+                                        label = { Text(stringResource(R.string.proxmox_os_type)) },
                                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = osExpanded) },
                                         modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
                                     )
@@ -347,7 +351,7 @@ fun ProxmoxGuestCreateScreen(
                         )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Media / Template", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(stringResource(R.string.proxmox_media_template), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             Spacer(Modifier.height(12.dp))
 
                             Row(
@@ -358,7 +362,7 @@ fun ProxmoxGuestCreateScreen(
                                     checked = useTemplate,
                                     onCheckedChange = { useTemplate = it }
                                 )
-                                Text("Use Template / Clone")
+                                Text(stringResource(R.string.proxmox_use_template))
                             }
 
                             if (useTemplate) {
@@ -366,7 +370,7 @@ fun ProxmoxGuestCreateScreen(
                                 OutlinedTextField(
                                     value = templateId,
                                     onValueChange = { templateId = it },
-                                    label = { Text("Template VMID") },
+                                    label = { Text(stringResource(R.string.proxmox_template_vmid)) },
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -380,12 +384,12 @@ fun ProxmoxGuestCreateScreen(
                                         selectedStorage = it
                                         selectedIso = null
                                     },
-                                    label = { Text(if (isQemu) "ISO Storage" else "Template Storage") },
+                                    label = { Text(stringResource(if (isQemu) R.string.proxmox_iso_storage else R.string.proxmox_template_storage)) },
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     trailingIcon = {
                                         IconButton(onClick = { fetchIsos() }) {
-                                            Icon(Icons.Default.Refresh, contentDescription = if (isQemu) "Load ISOs" else "Load Templates")
+                                            Icon(Icons.Default.Refresh, contentDescription = stringResource(if (isQemu) R.string.proxmox_load_isos else R.string.proxmox_load_templates))
                                         }
                                     }
                                 )
@@ -401,7 +405,10 @@ fun ProxmoxGuestCreateScreen(
                                         val isos = state.data
                                         if (isos.isEmpty()) {
                                             Text(
-                                                if (isQemu) "No ISOs found on $selectedStorage" else "No templates found on $selectedStorage",
+                                                stringResource(
+                                                    if (isQemu) R.string.proxmox_no_isos else R.string.proxmox_no_templates,
+                                                    selectedStorage
+                                                ),
                                                 color = Color.Gray
                                             )
                                         } else {
@@ -411,10 +418,10 @@ fun ProxmoxGuestCreateScreen(
                                                 onExpandedChange = { isoExpanded = it }
                                             ) {
                                                 OutlinedTextField(
-                                                    value = selectedIso?.substringAfterLast("/") ?: if (isQemu) "(Select ISO)" else "(Select Template)",
+                                                    value = selectedIso?.substringAfterLast("/") ?: stringResource(if (isQemu) R.string.proxmox_select_iso else R.string.proxmox_select_template),
                                                     onValueChange = {},
                                                     readOnly = true,
-                                                    label = { Text(if (isQemu) "ISO Image" else "Template") },
+                                                    label = { Text(stringResource(if (isQemu) R.string.proxmox_iso_image else R.string.proxmox_template)) },
                                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isoExpanded) },
                                                     modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
                                                 )
@@ -459,13 +466,13 @@ fun ProxmoxGuestCreateScreen(
                         )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Hardware", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(stringResource(R.string.proxmox_hardware), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             Spacer(Modifier.height(12.dp))
 
                             OutlinedTextField(
                                 value = cores,
                                 onValueChange = { cores = it },
-                                label = { Text("CPU Cores") },
+                                label = { Text(stringResource(R.string.proxmox_cpu_cores)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -475,7 +482,7 @@ fun ProxmoxGuestCreateScreen(
                             OutlinedTextField(
                                 value = memory,
                                 onValueChange = { memory = it },
-                                label = { Text("Memory (MiB)") },
+                                label = { Text(stringResource(R.string.proxmox_memory_mib)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -485,7 +492,7 @@ fun ProxmoxGuestCreateScreen(
                             OutlinedTextField(
                                 value = diskSize,
                                 onValueChange = { diskSize = it },
-                                label = { Text("Disk Size (GiB)") },
+                                label = { Text(stringResource(R.string.proxmox_disk_gib)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -495,7 +502,7 @@ fun ProxmoxGuestCreateScreen(
                             OutlinedTextField(
                                 value = networkBridge,
                                 onValueChange = { networkBridge = it },
-                                label = { Text("Network Bridge") },
+                                label = { Text(stringResource(R.string.proxmox_network_bridge)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true
                             )
@@ -512,7 +519,7 @@ fun ProxmoxGuestCreateScreen(
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Create ${if (isQemu) "VM" else "Container"}", fontSize = 16.sp)
+                        Text(stringResource(if (isQemu) R.string.proxmox_create_vm else R.string.proxmox_create_container), fontSize = 16.sp)
                     }
                     Spacer(Modifier.height(16.dp))
                 }
@@ -533,7 +540,7 @@ fun ProxmoxGuestCreateScreen(
                         ) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(16.dp))
-                            Text("Creating guest...")
+                            Text(stringResource(R.string.proxmox_creating))
                         }
                     }
                 }
@@ -549,8 +556,8 @@ fun ProxmoxGuestCreateScreen(
                 viewModel.clearGuestCreateResult()
             },
             icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green) },
-            title = { Text("Guest Created Successfully") },
-            text = { Text("Task UPID: $successUpid") },
+            title = { Text(stringResource(R.string.proxmox_guest_created)) },
+            text = { Text(stringResource(R.string.proxmox_task_upid, successUpid)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -558,7 +565,7 @@ fun ProxmoxGuestCreateScreen(
                         viewModel.clearGuestCreateResult()
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             }
         )
@@ -570,7 +577,7 @@ fun ProxmoxGuestCreateScreen(
             modifier = Modifier.padding(16.dp),
             action = {
                 TextButton(onClick = { createError = null }) {
-                    Text("Dismiss", color = Color.White)
+                    Text(stringResource(R.string.proxmox_dismiss), color = Color.White)
                 }
             }
         ) {

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.homelab.app.data.remote.dto.proxmox.*
@@ -63,15 +64,15 @@ fun ProxmoxCephScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Ceph - $node") },
+                title = { Text(stringResource(R.string.proxmox_ceph_title, node)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -102,7 +103,7 @@ fun ProxmoxCephScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
@@ -115,7 +116,7 @@ fun ProxmoxCephScreen(
                     if (!hasCephData) {
                         ProxmoxEmptyState(
                             icon = Icons.Default.Storage,
-                            title = "No Ceph cluster detected on this node"
+                            title = stringResource(R.string.proxmox_no_ceph)
                         )
                     } else {
                     LazyColumn(
@@ -148,7 +149,7 @@ fun ProxmoxCephScreen(
                                                 modifier = Modifier.size(24.dp)
                                             )
                                             Spacer(Modifier.width(10.dp))
-                                            Text("Health", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                            Text(stringResource(R.string.proxmox_health), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Box(
@@ -194,7 +195,7 @@ fun ProxmoxCephScreen(
                                         colors = CardDefaults.cardColors(containerColor = cephCardColor(isDark, serviceColor))
                                     ) {
                                         Column(Modifier.padding(16.dp)) {
-                                            Text("Monitors (${mons.size})", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                            Text(stringResource(R.string.proxmox_monitors, mons.size), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                                             Spacer(Modifier.height(8.dp))
                                             mons.forEach { mon ->
                                                 Row(
@@ -213,7 +214,7 @@ fun ProxmoxCephScreen(
                                                         Text(mon.name, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                                                     }
                                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                                        Text("Rank ${mon.rank}", fontSize = 11.sp, color = Color.Gray)
+                                                        Text(stringResource(R.string.proxmox_rank_value, mon.rank), fontSize = 11.sp, color = Color.Gray)
                                                         Spacer(Modifier.width(8.dp))
                                                         Text(
                                                             mon.state ?: "unknown",
@@ -238,10 +239,10 @@ fun ProxmoxCephScreen(
                                     colors = CardDefaults.cardColors(containerColor = cephCardColor(isDark, serviceColor))
                                 ) {
                                     Column(Modifier.padding(16.dp)) {
-                                        Text("OSD Map", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.proxmox_osd_map), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                                         Spacer(Modifier.height(8.dp))
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                                            OsdStat(osdmap.num_osds ?: 0, "Total")
+                                            OsdStat(osdmap.num_osds ?: 0, stringResource(R.string.proxmox_total))
                                             OsdStat(osdmap.num_up_osds ?: 0, "Up", Color.Green)
                                             OsdStat(osdmap.num_in_osds ?: 0, "In", Color.Blue)
                                         }
@@ -254,7 +255,7 @@ fun ProxmoxCephScreen(
                         ceph.osdmap?.osds?.let { osds ->
                             if (osds.isNotEmpty()) {
                                 item {
-                                    Text("OSDs (${osds.size})", fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 4.dp))
+                                    Text(stringResource(R.string.proxmox_osds, osds.size), fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 4.dp))
                                 }
                                 items(osds, key = { it.osd }) { osd ->
                                     Card(
@@ -282,7 +283,7 @@ fun ProxmoxCephScreen(
                                                 Text(osd.displayWeight, fontSize = 11.sp, color = Color.Gray)
                                                 Spacer(Modifier.width(8.dp))
                                                 Text(
-                                                    if (osd.isUp) "UP" else "DOWN",
+                                                    stringResource(if (osd.isUp) R.string.proxmox_up else R.string.proxmox_down),
                                                     fontSize = 10.sp,
                                                     color = if (osd.isUp) Color.Green else Color.Red,
                                                     fontWeight = FontWeight.Bold
@@ -309,10 +310,10 @@ fun ProxmoxCephScreen(
                                     colors = CardDefaults.cardColors(containerColor = cephCardColor(isDark, serviceColor))
                                 ) {
                                     Column(Modifier.padding(16.dp)) {
-                                        Text("Placement Groups", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.proxmox_placement_groups), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                                         Spacer(Modifier.height(8.dp))
                                         pgmap.num_pgs?.let { numPgs ->
-                                            Text("Total PGs: $numPgs", fontSize = 12.sp, color = Color.Gray)
+                                            Text(stringResource(R.string.proxmox_pgs_total_count, numPgs), fontSize = 12.sp, color = Color.Gray)
                                         }
                                         Spacer(Modifier.height(8.dp))
                                         // PG States
@@ -336,17 +337,17 @@ fun ProxmoxCephScreen(
                                     colors = CardDefaults.cardColors(containerColor = cephCardColor(isDark, serviceColor))
                                 ) {
                                     Column(Modifier.padding(16.dp)) {
-                                        Text("Data Usage", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.proxmox_data_usage), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                                         Spacer(Modifier.height(8.dp))
                                         // Progress bar
-                                        ProgressBar(label = "Used", percent = pgmap.usagePercent, color = serviceColor)
+                                        ProgressBar(label = stringResource(R.string.proxmox_used), percent = pgmap.usagePercent, color = serviceColor)
                                         Spacer(Modifier.height(8.dp))
                                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                            Text("Used: ${formatBytes(pgmap.bytes_used ?: 0L)}", fontSize = 11.sp, color = Color.Gray)
-                                            Text("Total: ${formatBytes(pgmap.bytes_total ?: 0L)}", fontSize = 11.sp, color = Color.Gray)
+                                            Text(stringResource(R.string.proxmox_used_value, formatBytes(pgmap.bytes_used ?: 0L)), fontSize = 11.sp, color = Color.Gray)
+                                            Text(stringResource(R.string.proxmox_total_value, formatBytes(pgmap.bytes_total ?: 0L)), fontSize = 11.sp, color = Color.Gray)
                                         }
                                         Spacer(Modifier.height(4.dp))
-                                        Text("Available: ${formatBytes(pgmap.bytes_avail ?: 0L)}", fontSize = 11.sp, color = Color.Gray)
+                                        Text(stringResource(R.string.proxmox_available_value, formatBytes(pgmap.bytes_avail ?: 0L)), fontSize = 11.sp, color = Color.Gray)
                                     }
                                 }
                             }
@@ -360,10 +361,10 @@ fun ProxmoxCephScreen(
                                     colors = CardDefaults.cardColors(containerColor = cephCardColor(isDark, serviceColor))
                                 ) {
                                     Column(Modifier.padding(16.dp)) {
-                                        Text("Filesystem Map", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.proxmox_fs_map), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                                         Spacer(Modifier.height(8.dp))
                                         fsmap.epoch?.let { epoch ->
-                                            Text("Epoch: $epoch", fontSize = 12.sp, color = Color.Gray)
+                                            Text(stringResource(R.string.proxmox_epoch_value, epoch), fontSize = 12.sp, color = Color.Gray)
                                         }
                                         fsmap.by_rank?.let { ranks ->
                                             ranks.forEach { rank ->

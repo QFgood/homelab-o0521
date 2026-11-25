@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.homelab.app.data.remote.dto.proxmox.ProxmoxPoolDetail
@@ -69,10 +70,10 @@ fun ProxmoxPoolDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pool: $poolId") },
+                title = { Text(stringResource(R.string.proxmox_pool_detail, poolId)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -98,7 +99,7 @@ fun ProxmoxPoolDetailScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
@@ -122,7 +123,7 @@ fun ProxmoxPoolDetailScreen(
                                         colors = CardDefaults.cardColors(containerColor = proxmoxCardColor(isDark, serviceColor))
                                     ) {
                                         Column(Modifier.padding(16.dp)) {
-                                            Text("Comment", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
+                                            Text(stringResource(R.string.proxmox_comment), fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
                                             Spacer(Modifier.height(4.dp))
                                             Text(detail.comment, fontSize = 14.sp)
                                         }
@@ -132,7 +133,7 @@ fun ProxmoxPoolDetailScreen(
 
                             // Members Header
                             item {
-                                Text("Members (${detail.members?.size ?: 0})", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.proxmox_members, detail.members?.size ?: 0), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             }
 
                             // Members List
@@ -228,7 +229,7 @@ private fun PoolMemberCard(
                         Spacer(Modifier.width(6.dp))
                     }
                     if (member.node != null) {
-                        Text("Node: ${member.node}", fontSize = 11.sp, color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_node_value, member.node), fontSize = 11.sp, color = Color.Gray)
                     }
                 }
             }

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.homelab.app.data.remote.dto.proxmox.ProxmoxAptPackage
@@ -61,15 +62,15 @@ fun ProxmoxAptUpdatesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("System Updates") },
+                title = { Text(stringResource(R.string.proxmox_system_updates)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -131,7 +132,7 @@ fun ProxmoxAptUpdatesScreen(
                                             color = serviceColor
                                         )
                                     }
-                                    Text("Node: $node", fontSize = 12.sp, color = Color.Gray)
+                                    Text(stringResource(R.string.proxmox_node_value, node), fontSize = 12.sp, color = Color.Gray)
                                 }
                             }
 

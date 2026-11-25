@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 withTimeoutOrNull(10_000L) {
                     val languageMode = preferencesRepository.languageMode.first()
                     AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageMode.code))
+                    NotificationHelper.createChannels(languageMode.localizedContext(this@MainActivity))
                     val selectedIcon = preferencesRepository.appIcon.first()
                     // Isolate icon switching: on MIUI/Xiaomi the PackageManager can throw
                     // SecurityException or NameNotFoundException for component aliases.
@@ -109,8 +110,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         enableEdgeToEdge()
-
-        NotificationHelper.createChannels(this)
 
         setContent {
             val themeMode by preferencesRepository.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
@@ -206,10 +205,15 @@ class MainActivity : AppCompatActivity() {
             combine(
                 preferencesRepository.serviceOrder,
                 preferencesRepository.hiddenServices,
-                servicesRepository.preferredInstancesByType
-            ) { order, hidden, preferred -> AppShortcuts.select(order, hidden, preferred) }
+                servicesRepository.preferredInstancesByType,
+                preferencesRepository.languageMode
+            ) { order, hidden, preferred, language ->
+                AppShortcuts.select(order, hidden, preferred) to language
+            }
                 .distinctUntilChanged()
-                .collect { AppShortcuts.publish(this@MainActivity, it) }
+                .collect { (instances, language) ->
+                    AppShortcuts.publish(language.localizedContext(this@MainActivity), instances)
+                }
         }
     }
 

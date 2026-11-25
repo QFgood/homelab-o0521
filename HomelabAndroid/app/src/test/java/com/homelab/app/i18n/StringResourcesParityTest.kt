@@ -14,7 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 class StringResourcesParityTest {
 
     private val resDir = File("src/main/res")
-    private val locales = listOf("fr", "es", "de", "it")
+    private val locales = listOf("fr", "es", "de", "it", "zh-rCN")
     private val placeholder = Regex("""%\d+\$[sd]|%[sd]""")
 
     private fun load(dir: String): Map<String, String> {

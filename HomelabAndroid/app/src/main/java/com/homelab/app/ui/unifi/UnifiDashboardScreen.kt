@@ -129,7 +129,7 @@ fun UnifiDashboardScreen(
                 title = { Text(ServiceType.UNIFI_NETWORK.displayName, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
@@ -137,7 +137,7 @@ fun UnifiDashboardScreen(
                         Text(stringResource(R.string.unifi_open_demo))
                     }
                     IconButton(onClick = { viewModel.fetchDashboard() }, enabled = !isRefreshing) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)

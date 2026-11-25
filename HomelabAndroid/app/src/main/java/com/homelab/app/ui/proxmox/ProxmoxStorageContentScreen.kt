@@ -57,7 +57,7 @@ fun ProxmoxStorageContentScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Storage: $storage") },
+                title = { Text(stringResource(R.string.proxmox_storage_content, storage)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -65,7 +65,7 @@ fun ProxmoxStorageContentScreen(
                 },
                 actions = {
                     IconButton(onClick = { viewModel.fetchStorageContent(node, storage) }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -92,7 +92,7 @@ fun ProxmoxStorageContentScreen(
                 }
                 is UiState.Offline -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No internet connection", color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_no_internet), color = Color.Gray)
                     }
                 }
                 is UiState.Success -> {
@@ -102,7 +102,7 @@ fun ProxmoxStorageContentScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(Icons.Default.FolderOpen, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(48.dp))
                                 Spacer(Modifier.height(8.dp))
-                                Text("No content in this storage", color = Color.Gray)
+                                Text(stringResource(R.string.proxmox_no_storage_content), color = Color.Gray)
                             }
                         }
                     } else {
@@ -141,8 +141,8 @@ fun ProxmoxStorageContentScreen(
     showDeleteDialog?.let { item ->
         AlertDialog(
             onDismissRequest = { showDeleteDialog = null },
-            title = { Text("Delete Volume") },
-            text = { Text("Are you sure you want to delete \"${item.volid}\"? This action cannot be undone.") },
+            title = { Text(stringResource(R.string.proxmox_delete_volume)) },
+            text = { Text(stringResource(R.string.proxmox_delete_volume_irreversible, item.volid)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -159,12 +159,12 @@ fun ProxmoxStorageContentScreen(
                         )
                     }
                 ) {
-                    Text("Delete", color = Color.Red)
+                    Text(stringResource(R.string.delete), color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -193,7 +193,7 @@ private fun StorageContentRow(content: ProxmoxStorageContent, color: Color, isDa
                     Text(content.volid, fontSize = 12.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     if (content.isProtected) {
                         Spacer(Modifier.width(6.dp))
-                        Icon(Icons.Default.Lock, contentDescription = "Protected", tint = Color(0xFFFF9800), modifier = Modifier.size(12.dp))
+                        Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.proxmox_protected), tint = Color(0xFFFF9800), modifier = Modifier.size(12.dp))
                     }
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -216,14 +216,14 @@ private fun StorageContentRow(content: ProxmoxStorageContent, color: Color, isDa
                         onClick = { showMenu = true },
                         modifier = Modifier.size(24.dp)
                     ) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "Actions", tint = Color.Gray, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.proxmox_actions), tint = Color.Gray, modifier = Modifier.size(16.dp))
                     }
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Delete", color = Color.Red) },
+                            text = { Text(stringResource(R.string.delete), color = Color.Red) },
                             leadingIcon = {
                                 Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red, modifier = Modifier.size(18.dp))
                             },

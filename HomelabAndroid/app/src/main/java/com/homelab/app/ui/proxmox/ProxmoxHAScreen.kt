@@ -94,12 +94,12 @@ fun ProxmoxHAScreen(
                 title = { Text(stringResource(R.string.proxmox_ha)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -121,13 +121,13 @@ fun ProxmoxHAScreen(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Resources", fontSize = 13.sp) },
+                    text = { Text(stringResource(R.string.proxmox_resources), fontSize = 13.sp) },
                     icon = { Icon(Icons.Default.Computer, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Groups", fontSize = 13.sp) },
+                    text = { Text(stringResource(R.string.proxmox_ha_groups), fontSize = 13.sp) },
                     icon = { Icon(Icons.Default.Group, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
@@ -172,7 +172,7 @@ private fun HAResourcesTab(
             if (resources.isEmpty()) {
                 ProxmoxEmptyState(
                     icon = Icons.Default.Computer,
-                    title = "No HA resources configured"
+                    title = stringResource(R.string.proxmox_no_ha_resources)
                 )
             } else {
                 LazyColumn(
@@ -231,7 +231,7 @@ private fun HAResourceCard(
                         Spacer(Modifier.width(6.dp))
                         Text("•", fontSize = 10.sp, color = Color.Gray)
                         Spacer(Modifier.width(6.dp))
-                        Text("Group: ${resource.group}", fontSize = 11.sp, color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_group_value, resource.group), fontSize = 11.sp, color = Color.Gray)
                     }
                 }
             }
@@ -303,7 +303,7 @@ private fun HAGroupsTab(
             if (groups.isEmpty()) {
                 ProxmoxEmptyState(
                     icon = Icons.Default.Group,
-                    title = "No HA groups configured"
+                    title = stringResource(R.string.proxmox_no_ha_groups)
                 )
             } else {
                 LazyColumn(
@@ -352,7 +352,7 @@ private fun HAGroupCard(
                         fontWeight = FontWeight.Medium
                     )
                     if (!group.type.isNullOrBlank()) {
-                        Text("Type: ${group.type}", fontSize = 11.sp, color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_type_value, group.type), fontSize = 11.sp, color = Color.Gray)
                     }
                 }
             }
@@ -403,10 +403,10 @@ private fun HAGroupCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (group.restricted == 1) {
-                    Chip(text = "Restricted", fontSize = 10.sp)
+                    Chip(text = stringResource(R.string.proxmox_restricted), fontSize = 10.sp)
                 }
                 if (group.nofailback == 1) {
-                    Chip(text = "No Failback", fontSize = 10.sp)
+                    Chip(text = stringResource(R.string.proxmox_no_failback), fontSize = 10.sp)
                 }
             }
         }
@@ -439,7 +439,7 @@ private fun ReplicationTab(
             if (jobs.isEmpty()) {
                 ProxmoxEmptyState(
                     icon = Icons.Default.Sync,
-                    title = "No replication jobs configured"
+                    title = stringResource(R.string.proxmox_no_replication)
                 )
             } else {
                 LazyColumn(
@@ -499,7 +499,7 @@ private fun ReplicationJobCard(
                         Spacer(Modifier.width(6.dp))
                         Text("->", fontSize = 10.sp, color = Color.Gray)
                         Spacer(Modifier.width(6.dp))
-                        Text("Target: ${job.target}", fontSize = 11.sp, color = Color.Gray)
+                        Text(stringResource(R.string.proxmox_target_value, job.target.orEmpty()), fontSize = 11.sp, color = Color.Gray)
                     }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -527,7 +527,7 @@ private fun ReplicationJobCard(
             ) {
                 Icon(
                     Icons.Default.PlayArrow,
-                    contentDescription = "Run Now",
+                    contentDescription = stringResource(R.string.proxmox_run_now),
                     tint = if (job.isEnabled) color else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )

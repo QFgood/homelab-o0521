@@ -70,21 +70,21 @@ fun ProxmoxConsoleScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Console - ${if (isQemu) "VM" else "CT"} $vmid") },
+                title = { Text(stringResource(R.string.proxmox_console_title, if (isQemu) "VM" else "CT", vmid)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     if (vncTicketState is UiState.Success) {
                         val ticketData = (vncTicketState as UiState.Success<ProxmoxVncTicketData>).data
                         IconButton(onClick = { openInBrowser(ticketData) }) {
-                            Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = "Open in Browser")
+                            Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = stringResource(R.string.proxmox_open_browser))
                         }
                     }
                     IconButton(onClick = { retryConsole() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
                 }
             )
@@ -104,7 +104,7 @@ fun ProxmoxConsoleScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(16.dp))
-                            Text("Fetching VNC ticket...", color = Color.Gray)
+                            Text(stringResource(R.string.proxmox_fetched_vnc), color = Color.Gray)
                         }
                     }
                 }
@@ -130,7 +130,7 @@ fun ProxmoxConsoleScreen(
                         Button(onClick = { viewModel.fetchVncTicket(node, vmid, isQemu) }) {
                             Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -152,16 +152,16 @@ fun ProxmoxConsoleScreen(
                                 modifier = Modifier.size(48.dp)
                             )
                             Spacer(Modifier.height(16.dp))
-                            Text("SSL Certificate Error", color = Color(0xFFFF9800), fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.proxmox_ssl_error), color = Color(0xFFFF9800), fontSize = 18.sp, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                "The WebView could not verify the server's SSL certificate. This may happen with self-signed certificates.",
+                                stringResource(R.string.proxmox_ssl_self_signed_desc),
                                 color = Color.Gray,
                                 fontSize = 14.sp
                             )
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                "Try opening the console in your browser instead.",
+                                stringResource(R.string.proxmox_console_browser_help),
                                 color = Color.Gray,
                                 fontSize = 14.sp
                             )
@@ -170,12 +170,12 @@ fun ProxmoxConsoleScreen(
                                 OutlinedButton(onClick = { retryConsole() }) {
                                     Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text("Retry")
+                                    Text(stringResource(R.string.retry))
                                 }
                                 Button(onClick = { openInBrowser(ticketData) }) {
                                     Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text("Open in Browser")
+                                    Text(stringResource(R.string.proxmox_open_browser))
                                 }
                             }
                         }
@@ -194,18 +194,18 @@ fun ProxmoxConsoleScreen(
                                 modifier = Modifier.size(48.dp)
                             )
                             Spacer(Modifier.height(16.dp))
-                            Text("Failed to load console", color = Color.Red, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.proxmox_console_failed), color = Color.Red, fontSize = 18.sp, fontWeight = FontWeight.Medium)
                             Spacer(Modifier.height(8.dp))
                             Text(loadingError!!, color = Color.Gray, fontSize = 14.sp)
                             Spacer(Modifier.height(24.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 OutlinedButton(onClick = { retryConsole() }) {
-                                    Text("Retry")
+                                    Text(stringResource(R.string.retry))
                                 }
                                 Button(onClick = { openInBrowser(ticketData) }) {
                                     Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text("Open in Browser")
+                                    Text(stringResource(R.string.proxmox_open_browser))
                                 }
                             }
                         }
@@ -301,7 +301,7 @@ fun ProxmoxConsoleScreen(
                                     )
                                 ) {
                                     Text(
-                                        "Loading console...",
+                                        stringResource(R.string.proxmox_console_loading),
                                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                         color = consoleColor
                                     )

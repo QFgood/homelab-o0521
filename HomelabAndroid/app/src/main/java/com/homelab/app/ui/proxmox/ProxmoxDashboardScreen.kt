@@ -315,7 +315,7 @@ fun ProxmoxDashboardScreen(
                             ) {
                                 Row(Modifier.padding(16.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Column {
-                                        Text("Proxmox VE", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                        Text(stringResource(R.string.service_proxmox), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                                         Text("v${data.version.version ?: "?"} (${data.version.release ?: "?"})", fontSize = 12.sp, color = Color.Gray)
                                     }
                                     Text("${data.onlineNodes}/${data.nodes.size} ${if (data.onlineNodes == 1) stringResource(R.string.proxmox_node) else "nodes"}", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = if (data.onlineNodes == data.nodes.size) Color.Green else Color.Red)

@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.homelab.app.util.UiState
@@ -42,16 +43,18 @@ fun ProxmoxConfigScreen(
     }
 
     val nameKey = if (isQemu) "name" else "hostname"
-    val nameLabel = if (isQemu) "Name" else "Hostname"
-    val nameHelp = if (isQemu) "Display name for the guest" else "Hostname for the container"
+    val nameLabel = stringResource(if (isQemu) R.string.proxmox_name else R.string.proxmox_hostname)
+    val nameHelp = stringResource(
+        if (isQemu) R.string.proxmox_guest_name_help else R.string.proxmox_container_hostname_help
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Config - ${if (isQemu) "VM" else "CT"} $vmid") },
+                title = { Text(stringResource(R.string.proxmox_edit_config_guest_title, if (isQemu) "VM" else "CT", vmid)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
@@ -80,7 +83,7 @@ fun ProxmoxConfigScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         } else {
-                            Icon(Icons.Default.Save, contentDescription = "Save")
+                            Icon(Icons.Default.Save, contentDescription = stringResource(R.string.save))
                         }
                     }
                 }
@@ -100,17 +103,17 @@ fun ProxmoxConfigScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(Modifier.height(16.dp))
-                            Text("Loading config...", color = Color.Gray)
+                            Text(stringResource(R.string.proxmox_loading_config), color = Color.Gray)
                         }
                     }
                 }
                 is UiState.Error -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Error: ${state.message}", color = Color.Red)
+                            Text(stringResource(R.string.proxmox_error_message, state.message), color = Color.Red)
                             Spacer(Modifier.height(16.dp))
                             Button(onClick = { viewModel.fetchGuestConfig(node, vmid, isQemu) }) {
-                                Text("Retry")
+                                Text(stringResource(R.string.retry))
                             }
                         }
                     }
@@ -148,7 +151,7 @@ fun ProxmoxConfigScreen(
 
                         // CPU field
                         Text(
-                            "CPU",
+                            stringResource(R.string.proxmox_cpu),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(top = 8.dp)
@@ -156,18 +159,18 @@ fun ProxmoxConfigScreen(
                         OutlinedTextField(
                             value = cores,
                             onValueChange = { if (it.isEmpty() || it.all { c -> c.isDigit() }) cores = it },
-                            label = { Text("Cores") },
+                            label = { Text(stringResource(R.string.proxmox_cpu_cores_label)) },
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
-                            supportingText = { Text("Number of CPU cores") }
+                            supportingText = { Text(stringResource(R.string.proxmox_cpu_cores_help)) }
                         )
 
                         Divider()
 
                         // Memory field
                         Text(
-                            "Memory",
+                            stringResource(R.string.proxmox_memory_section),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(top = 8.dp)
@@ -175,11 +178,11 @@ fun ProxmoxConfigScreen(
                         OutlinedTextField(
                             value = memory,
                             onValueChange = { if (it.isEmpty() || it.all { c -> c.isDigit() }) memory = it },
-                            label = { Text("Memory (MB)") },
+                            label = { Text(stringResource(R.string.proxmox_memory_label)) },
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
-                            supportingText = { Text("RAM in megabytes") }
+                            supportingText = { Text(stringResource(R.string.proxmox_memory_help)) }
                         )
 
                         Spacer(Modifier.height(32.dp))
@@ -212,7 +215,7 @@ fun ProxmoxConfigScreen(
                                 )
                                 Spacer(Modifier.width(8.dp))
                             }
-                            Text("Save Changes")
+                            Text(stringResource(R.string.proxmox_save_changes))
                         }
 
                         // Error display

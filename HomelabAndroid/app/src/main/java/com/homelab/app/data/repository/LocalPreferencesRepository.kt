@@ -1,6 +1,8 @@
 package com.homelab.app.data.repository
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,11 +39,24 @@ enum class LanguageMode(val code: String, val shortCode: String, val nativeName:
     ENGLISH("en", "EN", "English"),
     FRENCH("fr", "FR", "Français"),
     SPANISH("es", "ES", "Español"),
-    GERMAN("de", "DE", "Deutsch");
+    GERMAN("de", "DE", "Deutsch"),
+    SIMPLIFIED_CHINESE("zh-CN", "简", "简体中文");
+
+    fun localizedContext(context: Context): Context {
+        val configuration = Configuration(context.resources.configuration)
+        configuration.setLocale(Locale.forLanguageTag(code))
+        return context.createConfigurationContext(configuration)
+    }
 
     companion object {
-        fun fromCode(code: String?): LanguageMode {
-            return entries.find { it.code.equals(code, ignoreCase = true) } ?: ENGLISH
+        fun fromCode(code: String?, systemLocale: Locale): LanguageMode {
+            if (code != null) {
+                return entries.find { it.code.equals(code, ignoreCase = true) } ?: ENGLISH
+            }
+            val usesSimplifiedChinese = systemLocale.language == "zh" &&
+                (systemLocale.script == "Hans" ||
+                    (systemLocale.script.isEmpty() && systemLocale.country !in setOf("HK", "MO", "TW")))
+            return if (usesSimplifiedChinese) SIMPLIFIED_CHINESE else ENGLISH
         }
     }
 }
@@ -99,7 +115,7 @@ class LocalPreferencesRepository @Inject constructor(
             }
         }
         .map { preferences ->
-            LanguageMode.fromCode(preferences[LANG_KEY])
+            LanguageMode.fromCode(preferences[LANG_KEY], Resources.getSystem().configuration.locales[0])
         }
 
     suspend fun setThemeMode(mode: ThemeMode) {
