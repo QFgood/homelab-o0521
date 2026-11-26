@@ -12,6 +12,9 @@ import com.homelab.app.data.repository.ServicesRepository
 import com.homelab.app.domain.alerts.ServiceAlert
 import com.homelab.app.domain.alerts.ServiceAlertEvaluator
 import com.homelab.app.domain.model.ServiceInstance
+import com.homelab.app.notifications.InboxNotification
+import com.homelab.app.notifications.NotificationInbox
+import com.homelab.app.notifications.NotificationSource
 import com.homelab.app.util.AppIconOption
 import com.homelab.app.util.Logger
 import com.homelab.app.util.NotificationHelper
@@ -19,6 +22,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
+import java.io.IOException
+import java.util.UUID
 
 /**
  * Periodic reachability check of every configured instance. Notifies only on state
@@ -30,7 +35,8 @@ class ServiceAlertWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val servicesRepository: ServicesRepository,
     private val serviceDao: ServiceDao,
-    private val preferences: LocalPreferencesRepository
+    private val preferences: LocalPreferencesRepository,
+    private val inbox: NotificationInbox
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
@@ -93,11 +99,23 @@ class ServiceAlertWorker @AssistedInject constructor(
             val critical = alert is ServiceAlert.Down
             val titleRes = if (critical) R.string.alerts_service_down_title else R.string.alerts_service_recovered_title
             val textRes = if (critical) R.string.alerts_service_down_text else R.string.alerts_service_recovered_text
+            val title = context.getString(titleRes, name)
+            val text = context.getString(textRes, instance.type.displayName)
+            try {
+                inbox.record(InboxNotification(
+                    id = "service:${UUID.randomUUID()}",
+                    source = NotificationSource.SERVICE,
+                    title = title,
+                    message = text
+                ))
+            } catch (error: IOException) {
+                Logger.e(TAG, "Could not store the alert in the notification inbox", error)
+            }
             NotificationHelper.notifyServiceAlert(
                 context = context,
                 instanceId = instance.id,
-                title = context.getString(titleRes, name),
-                text = context.getString(textRes, instance.type.displayName),
+                title = title,
+                text = text,
                 critical = critical,
                 largeIconRes = appIcon.previewDrawableRes
             )

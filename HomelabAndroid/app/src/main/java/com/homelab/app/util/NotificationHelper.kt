@@ -18,8 +18,11 @@ import com.homelab.app.MainActivity
 import com.homelab.app.R
 
 object NotificationHelper {
+    const val ACTION_OPEN_INBOX = "com.homelab.app.action.OPEN_NOTIFICATION_INBOX"
     const val CHANNEL_CRITICAL_ALERTS = "critical_alerts"
     const val CHANNEL_GENERAL_INFO = "general_info"
+    private const val CHANNEL_DOCKER_EVENTS = "docker_events"
+    private const val CHANNEL_DOCKER_CONNECTION = "docker_connection"
     private const val TAG = "NotificationHelper"
 
     fun createChannels(context: Context) {
@@ -49,6 +52,49 @@ object NotificationHelper {
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
             PackageManager.PERMISSION_GRANTED
         return permissionGranted && NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
+
+    fun dockerConnectionNotification(context: Context): android.app.Notification {
+        context.getSystemService(NotificationManager::class.java).createNotificationChannel(
+            NotificationChannel(CHANNEL_DOCKER_CONNECTION, context.getString(R.string.docker_push_connection_channel),
+                NotificationManager.IMPORTANCE_LOW)
+        )
+        return NotificationCompat.Builder(context, CHANNEL_DOCKER_CONNECTION)
+            .setSmallIcon(R.drawable.ic_notification_homelab)
+            .setContentTitle(context.getString(R.string.docker_push_title))
+            .setContentText(context.getString(R.string.docker_push_service_running))
+            .setOngoing(true)
+            .setContentIntent(openAppIntent(context))
+            .build()
+    }
+
+    fun notifyDocker(context: Context, id: String, title: String, message: String): Boolean {
+        if (!canPostNotifications(context)) return false
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(NotificationChannel(
+            CHANNEL_DOCKER_EVENTS, context.getString(R.string.docker_push_title),
+            NotificationManager.IMPORTANCE_DEFAULT
+        ))
+        if (manager.getNotificationChannel(CHANNEL_DOCKER_EVENTS)?.importance == NotificationManager.IMPORTANCE_NONE) {
+            return false
+        }
+        val text = message.take(4096)
+        val notification = NotificationCompat.Builder(context, CHANNEL_DOCKER_EVENTS)
+            .setSmallIcon(R.drawable.ic_notification_homelab)
+            .setContentTitle(title.take(160).ifBlank { context.getString(R.string.docker_push_title) })
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setOnlyAlertOnce(true)
+            .setAutoCancel(true)
+            .setContentIntent(openAppIntent(context))
+            .build()
+        return try {
+            NotificationManagerCompat.from(context).notify(id.take(64), 33103, notification)
+            true
+        } catch (_: SecurityException) {
+            false
+        }
     }
 
     /**
@@ -99,6 +145,7 @@ object NotificationHelper {
 
     private fun openAppIntent(context: Context): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
+            action = ACTION_OPEN_INBOX
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         return PendingIntent.getActivity(

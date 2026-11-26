@@ -73,7 +73,29 @@ jobs:
 
       - name: Build Signed Release APK
         working-directory: HomelabAndroid
-        run: ./gradlew :app:assembleRelease --console=plain -PenableUpdateCheck=true
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.HOMELAB_SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.HOMELAB_SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.HOMELAB_SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.HOMELAB_SIGNING_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$SIGNING_KEYSTORE_BASE64" ]]; then
+            : "${SIGNING_STORE_PASSWORD:?Missing HOMELAB_SIGNING_STORE_PASSWORD}"
+            : "${SIGNING_KEY_ALIAS:?Missing HOMELAB_SIGNING_KEY_ALIAS}"
+            : "${SIGNING_KEY_PASSWORD:?Missing HOMELAB_SIGNING_KEY_PASSWORD}"
+            signing_store=$(mktemp "$RUNNER_TEMP/homelab-signing.XXXXXX")
+            trap 'rm -f "$signing_store"' EXIT
+            printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$signing_store"
+            ./gradlew :app:assembleRelease --console=plain --no-configuration-cache \
+              -PenableUpdateCheck=true -PgithubUpdateRepository="$GITHUB_REPOSITORY" \
+              -Pandroid.injected.signing.store.file="$signing_store" \
+              -Pandroid.injected.signing.store.password="$SIGNING_STORE_PASSWORD" \
+              -Pandroid.injected.signing.key.alias="$SIGNING_KEY_ALIAS" \
+              -Pandroid.injected.signing.key.password="$SIGNING_KEY_PASSWORD"
+          else
+            ./gradlew :app:assembleRelease --console=plain
+          fi
 
       - name: Prepare Release Artifacts
         run: |

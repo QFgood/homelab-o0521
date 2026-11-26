@@ -29,6 +29,7 @@ import com.homelab.app.data.repository.TechnitiumRepository
 import com.homelab.app.data.repository.TrueNasRepository
 import com.homelab.app.data.repository.UnifiRepository
 import com.homelab.app.data.repository.UptimeKumaRepository
+import com.homelab.app.data.repository.MediaryScoutRepository
 import com.homelab.app.data.repository.WakapiRepository
 import com.homelab.app.data.repository.ProxmoxRepository
 import com.homelab.app.data.repository.PterodactylRepository
@@ -67,6 +68,7 @@ class ServiceLoginViewModel @Inject constructor(
     private val komodoRepository: KomodoRepository,
     private val maltrailRepository: MaltrailRepository,
     private val uptimeKumaRepository: UptimeKumaRepository,
+    private val mediaryScoutRepository: MediaryScoutRepository,
     private val unifiRepository: UnifiRepository,
     private val nginxProxyManagerRepository: NginxProxyManagerRepository,
     private val healthchecksRepository: HealthchecksRepository,
@@ -129,7 +131,13 @@ class ServiceLoginViewModel @Inject constructor(
             val cleanFallbackUrl = cleanOptionalUrl(fallbackUrl, serviceType, allowHttp)
             val trimmedUsername = username.trim()
             val trimmedPassword = password.trim()
-            val trimmedApiKey = apiKey.trim()
+            val trimmedApiKey = apiKey.trim().let { key ->
+                if (serviceType == ServiceType.MEDIARY_SCOUT && key.startsWith("Bearer ", ignoreCase = true)) {
+                    key.substring(7).trim()
+                } else {
+                    key
+                }
+            }
             val trimmedMfaCode = mfaCode.trim()
             val trimmedFingerprint = customCertFingerprint.trim()
             val normalizedStoredUsername = when (serviceType) {
@@ -440,6 +448,24 @@ class ServiceLoginViewModel @Inject constructor(
                                 apiKey = trimmedApiKey,
                                 fallbackUrl = cleanFallbackUrl
                             )
+                        }
+                        ServiceType.MEDIARY_SCOUT -> {
+                            require(trimmedApiKey.isNotBlank()) {
+                                context.getString(R.string.login_error_api_key_required)
+                            }
+                            require(trimmedApiKey.all { it in '!'..'~' }) {
+                                context.getString(R.string.error_invalid_credentials)
+                            }
+                            ServiceInstance(
+                                id = instanceId,
+                                type = serviceType,
+                                label = normalizedLabel,
+                                url = cleanUrl,
+                                apiKey = trimmedApiKey,
+                                fallbackUrl = cleanFallbackUrl,
+                                allowHttp = allowHttp,
+                                customCertFingerprint = trimmedFingerprint.ifBlank { null }
+                            ).also { mediaryScoutRepository.authenticate(it) }
                         }
                         ServiceType.KOMODO -> {
                             require(trimmedApiKey.isNotBlank()) { context.getString(R.string.login_error_api_key_required) }

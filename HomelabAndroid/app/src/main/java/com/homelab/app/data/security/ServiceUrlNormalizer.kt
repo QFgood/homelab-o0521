@@ -66,6 +66,12 @@ object ServiceUrlNormalizer {
                 "/dashboard",
                 "/status"
             )
+            ServiceType.MEDIARY_SCOUT -> listOf(
+                "/api/agent/library",
+                "/api/agent/activity",
+                "/api/agent",
+                "/api/health"
+            )
             ServiceType.PANGOLIN -> listOf(
                 "/api/v1",
                 "/api",

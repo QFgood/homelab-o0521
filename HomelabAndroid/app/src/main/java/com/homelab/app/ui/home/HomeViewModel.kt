@@ -28,6 +28,7 @@ import com.homelab.app.data.repository.ServicesRepository
 import com.homelab.app.data.repository.TechnitiumRepository
 import com.homelab.app.data.repository.TrueNasRepository
 import com.homelab.app.data.repository.UptimeKumaRepository
+import com.homelab.app.data.repository.MediaryScoutRepository
 import com.homelab.app.domain.model.ServiceInstance
 import com.homelab.app.util.ServiceType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,6 +64,7 @@ class HomeViewModel @Inject constructor(
     private val komodoRepository: KomodoRepository,
     private val maltrailRepository: MaltrailRepository,
     private val uptimeKumaRepository: UptimeKumaRepository,
+    private val mediaryScoutRepository: MediaryScoutRepository,
     private val craftyRepository: CraftyRepository,
     private val nginxProxyManagerRepository: NginxProxyManagerRepository,
     private val healthchecksRepository: HealthchecksRepository,
@@ -308,6 +310,10 @@ class HomeViewModel @Inject constructor(
                 val latest = java.text.NumberFormat.getInstance().format(summary.latestCount)
                 val day = summary.latestDayLabel.takeIf { it.isNotBlank() }
                 InstanceSummary(latest, day, "maltrail_findings")
+            }
+            ServiceType.MEDIARY_SCOUT -> {
+                val count = mediaryScoutRepository.getTrackedCount(instanceId)
+                InstanceSummary("$count", null, "mediary_scout_tracking")
             }
             ServiceType.UPTIME_KUMA -> {
                 val summary = uptimeKumaRepository.getSummary(instanceId)

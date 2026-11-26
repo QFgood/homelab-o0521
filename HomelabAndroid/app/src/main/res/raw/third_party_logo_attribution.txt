@@ -10,3 +10,8 @@ respective owners.
 
 Maltrail's logo is from the Maltrail project:
 https://github.com/stamparm/maltrail
+
+Mediary Scout's logo is adapted from its web icon:
+https://github.com/QFgood/mediary-scout-o0521/blob/main/apps/web/app/icon.svg
+Copyright (C) 2026 Mediary Scout contributors. ISC license:
+https://github.com/QFgood/mediary-scout-o0521/blob/main/LICENSE

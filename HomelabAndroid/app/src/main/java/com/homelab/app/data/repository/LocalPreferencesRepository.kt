@@ -84,12 +84,6 @@ class LocalPreferencesRepository @Inject constructor(
     private val DOCKHAND_SHOW_RAW_ACTIVITY_KEY = booleanPreferencesKey("dockhand_show_raw_activity")
     private val HOME_CYBERPUNK_CARDS_KEY = booleanPreferencesKey("home_cyberpunk_cards")
     private val APP_ICON_KEY = stringPreferencesKey("app_icon")
-    private val DISMISSED_UPDATE_VERSION_KEY = stringPreferencesKey("dismissed_update_version")
-    private val UPDATE_LAST_CHECKED_AT_KEY = longPreferencesKey("update_last_checked_at")
-    private val UPDATE_AVAILABLE_VERSION_KEY = stringPreferencesKey("update_available_version")
-    private val UPDATE_AVAILABLE_URL_KEY = stringPreferencesKey("update_available_url")
-    private val UPDATE_AVAILABLE_CHANGELOG_KEY = stringPreferencesKey("update_available_changelog")
-    private val DISMISSED_POPUP_VERSION_KEY = stringPreferencesKey("dismissed_popup_version")
     private val MEDIA_ARR_TUTORIAL_DISMISSED_KEY = booleanPreferencesKey("media_arr_tutorial_dismissed")
     private val BACKUP_SELECTED_TYPES_KEY = stringPreferencesKey("backup_selected_service_types")
     private val BACKUP_REMEMBER_SELECTION_KEY = booleanPreferencesKey("backup_remember_selection")
@@ -441,118 +435,6 @@ class LocalPreferencesRepository @Inject constructor(
     suspend fun setBackupRememberSelectionEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[BACKUP_REMEMBER_SELECTION_KEY] = enabled
-        }
-    }
-
-    val dismissedUpdateVersion: Flow<String?> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences -> preferences[DISMISSED_UPDATE_VERSION_KEY] }
-
-    suspend fun setDismissedUpdateVersion(version: String?) {
-        dataStore.edit { preferences ->
-            if (version.isNullOrBlank()) {
-                preferences.remove(DISMISSED_UPDATE_VERSION_KEY)
-            } else {
-                preferences[DISMISSED_UPDATE_VERSION_KEY] = version
-            }
-        }
-    }
-
-    val updateLastCheckedAt: Flow<Long?> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences -> preferences[UPDATE_LAST_CHECKED_AT_KEY] }
-
-    suspend fun setUpdateLastCheckedAt(timestampMillis: Long?) {
-        dataStore.edit { preferences ->
-            if (timestampMillis == null) {
-                preferences.remove(UPDATE_LAST_CHECKED_AT_KEY)
-            } else {
-                preferences[UPDATE_LAST_CHECKED_AT_KEY] = timestampMillis
-            }
-        }
-    }
-
-    val updateAvailableVersion: Flow<String?> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences -> preferences[UPDATE_AVAILABLE_VERSION_KEY] }
-
-    val updateAvailableUrl: Flow<String?> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences -> preferences[UPDATE_AVAILABLE_URL_KEY] }
-
-    val updateAvailableChangelog: Flow<String?> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences -> preferences[UPDATE_AVAILABLE_CHANGELOG_KEY] }
-
-    val dismissedPopupVersion: Flow<String?> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }
-        .map { preferences -> preferences[DISMISSED_POPUP_VERSION_KEY] }
-
-    suspend fun setAvailableUpdate(version: String?, url: String?, changelog: String? = null) {
-        dataStore.edit { preferences ->
-            if (version.isNullOrBlank()) {
-                preferences.remove(UPDATE_AVAILABLE_VERSION_KEY)
-                preferences.remove(UPDATE_AVAILABLE_URL_KEY)
-                preferences.remove(UPDATE_AVAILABLE_CHANGELOG_KEY)
-            } else {
-                preferences[UPDATE_AVAILABLE_VERSION_KEY] = version
-                if (url.isNullOrBlank()) {
-                    preferences.remove(UPDATE_AVAILABLE_URL_KEY)
-                } else {
-                    preferences[UPDATE_AVAILABLE_URL_KEY] = url
-                }
-                if (changelog.isNullOrBlank()) {
-                    preferences.remove(UPDATE_AVAILABLE_CHANGELOG_KEY)
-                } else {
-                    preferences[UPDATE_AVAILABLE_CHANGELOG_KEY] = changelog
-                }
-            }
-        }
-    }
-
-    suspend fun setDismissedPopupVersion(version: String?) {
-        dataStore.edit { preferences ->
-            if (version.isNullOrBlank()) {
-                preferences.remove(DISMISSED_POPUP_VERSION_KEY)
-            } else {
-                preferences[DISMISSED_POPUP_VERSION_KEY] = version
-            }
         }
     }
 

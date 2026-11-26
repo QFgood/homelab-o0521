@@ -19,12 +19,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // F-Droid builds must not contact GitHub or offer an incompatible APK update.
-        // The official release workflow opts in explicitly with -PenableUpdateCheck=true.
+        // Standalone releases with persistent signing opt in with -PenableUpdateCheck=true.
         val enableUpdateCheck = project.findProperty("enableUpdateCheck")
             ?.toString()
             ?.toBooleanStrictOrNull()
             ?: false
         buildConfigField("boolean", "ENABLE_UPDATE_CHECK", enableUpdateCheck.toString())
+        val updateRepository = providers.gradleProperty("githubUpdateRepository")
+            .getOrElse("QFgood/homelab-o0521")
+        require(Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+").matches(updateRepository))
+        buildConfigField("String", "GITHUB_UPDATE_REPOSITORY", "\"$updateRepository\"")
         
         vectorDrawables {
             useSupportLibrary = true

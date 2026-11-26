@@ -234,6 +234,7 @@ fun ServiceLoginScreen(
                 ServiceType.LINUX_UPDATE -> stringResource(R.string.login_hint_linux_update)
                 ServiceType.DOCKHAND -> stringResource(R.string.login_hint_dockhand)
                 ServiceType.DOCKMON -> stringResource(R.string.login_hint_dockmon)
+                ServiceType.MEDIARY_SCOUT -> stringResource(R.string.login_hint_mediary_scout)
                 ServiceType.KOMODO -> stringResource(R.string.login_hint_komodo)
                 ServiceType.MALTRAIL -> stringResource(R.string.login_hint_maltrail)
                 ServiceType.UPTIME_KUMA -> stringResource(R.string.login_hint_uptime_kuma)
@@ -592,6 +593,7 @@ fun ServiceLoginScreen(
                 serviceType == ServiceType.HEALTHCHECKS ||
                 serviceType == ServiceType.LINUX_UPDATE ||
                 serviceType == ServiceType.DOCKMON ||
+                serviceType == ServiceType.MEDIARY_SCOUT ||
                 serviceType == ServiceType.KOMODO ||
                 serviceType == ServiceType.UNIFI_NETWORK ||
                 serviceType == ServiceType.JELLYSTAT ||
@@ -610,7 +612,10 @@ fun ServiceLoginScreen(
                 SecretField(
                     value = apiKey,
                     onValueChange = { apiKey = it },
-                    label = stringResource(R.string.login_api_key_label),
+                    label = stringResource(
+                        if (serviceType == ServiceType.MEDIARY_SCOUT) R.string.mediary_scout_token
+                        else R.string.login_api_key_label
+                    ),
                     showSecret = showSecret,
                     onToggleSecret = { showSecret = !showSecret }
                 )

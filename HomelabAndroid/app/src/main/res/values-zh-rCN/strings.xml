@@ -1967,4 +1967,67 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d 正在运行</string>
     <string name="proxmox_resource_container">容器</string>
     <string name="proxmox_resource_vm">虚拟机</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">巡影</string>
+    <string name="login_hint_mediary_scout">输入巡影实例地址和 Agent API 令牌。Docker 部署使用 MEDIA_TRACK_AGENT_TOKEN，桌面版令牌位于 ~/.mediary/agent.json。</string>
+    <string name="mediary_scout_token">Agent API 令牌</string>
+    <string name="mediary_scout_api_not_found">巡影 Agent API 不可用。请检查实例地址，并确认已启用 Agent API 令牌。</string>
+    <string name="mediary_scout_library">追踪库</string>
+    <string name="mediary_scout_tasks">任务</string>
+    <string name="mediary_scout_notifications">通知</string>
+    <string name="mediary_scout_tracking">追踪条目</string>
+    <string name="mediary_scout_active">追踪中</string>
+    <string name="mediary_scout_no_entries">暂无追踪条目。</string>
+    <string name="mediary_scout_no_tasks">没有排队中或运行中的任务。</string>
+    <string name="mediary_scout_no_notifications">暂无近期通知。</string>
+    <string name="mediary_scout_season">第 %1$d 季</string>
+    <string name="mediary_scout_progress">已获取 %1$d / %2$d</string>
+    <string name="mediary_scout_obtained">已获取 %1$d</string>
+    <string name="mediary_scout_missing">已播未获取：%1$s</string>
+    <string name="mediary_scout_movie">电影</string>
+    <string name="mediary_scout_tv">剧集</string>
+    <string name="mediary_scout_anime">动画</string>
+    <string name="mediary_scout_queued">排队中</string>
+
+    <!-- GitHub updates and Docker notifications -->
+    <string name="github_update_title">GitHub 更新</string>
+    <string name="github_update_check">检查更新</string>
+    <string name="github_update_checking">正在检查 GitHub…</string>
+    <string name="github_update_current">已是最新版本。</string>
+    <string name="github_update_no_release">GitHub 当前没有可用的同渠道发布包。</string>
+    <string name="github_update_found">发现新版本 %1$s。</string>
+    <string name="github_update_download">下载 APK</string>
+    <string name="github_update_downloading">正在下载并校验 APK…</string>
+    <string name="github_update_install">安装更新</string>
+    <string name="github_update_install_hint">如果 Android 要求授予安装权限，请授权后再次点按「安装更新」。</string>
+    <string name="github_update_error">无法检查或下载更新，请重试。</string>
+    <string name="github_update_install_error">Android 无法打开 APK 安装程序。</string>
+    <string name="github_update_incompatible">此 APK 的包名、签名或版本与当前安装不兼容。</string>
+    <string name="docker_push_title">Docker 消息推送</string>
+    <string name="docker_push_connection_channel">Docker 订阅状态</string>
+    <string name="docker_push_service_running">正在保持 ntfy 订阅运行</string>
+    <string name="docker_push_hint">把 Docker 事件发布到此 ntfy 主题。订阅期间，Homelab 会在后台保持连接。</string>
+    <string name="docker_push_topic">ntfy 主题 HTTPS 地址</string>
+    <string name="docker_push_token">ntfy 访问令牌（可选）</string>
+    <string name="docker_push_connect">保存并连接</string>
+    <string name="docker_push_disconnect">停止订阅</string>
+    <string name="docker_push_stopped">订阅已停止</string>
+    <string name="docker_push_connecting">正在连接 ntfy…</string>
+    <string name="docker_push_connected">已连接，正在等待 Docker 消息。</string>
+    <string name="docker_push_reconnecting">连接中断，正在重连…</string>
+    <string name="docker_push_rejected">订阅失败，请检查主题地址和访问令牌。</string>
+    <string name="docker_push_invalid_url">请输入以 ntfy 主题名称结尾的 HTTPS 地址。</string>
+    <string name="docker_push_error">无法更改 Docker 订阅。</string>
+    <string name="mediary_acquire_title">搜索影片</string>
+    <string name="mediary_acquire_hint">请选择正确的影片，再确认获取。</string>
+    <string name="mediary_acquire_query">电影或剧集名称</string>
+    <string name="mediary_acquire_season">季数</string>
+    <string name="mediary_acquire_submit">确认获取</string>
+    <string name="mediary_search_submit">搜索</string>
+    <string name="mediary_search_empty">没有找到匹配的影片。</string>
+    <string name="mediary_search_again">重新搜索</string>
+    <string name="mediary_search_server_required">当前巡影服务缺少独立搜索接口。请更新巡影服务端，再搜索选片。</string>
+    <string name="nav_notifications">通知</string>
+    <string name="inbox_empty">收到新的 Docker 消息或服务告警后，会显示在这里。</string>
 </resources>

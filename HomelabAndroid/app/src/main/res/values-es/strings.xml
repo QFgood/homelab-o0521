@@ -1967,4 +1967,67 @@
     <string name="proxmox_resources_running_count">%1$d/%2$d en ejecución</string>
     <string name="proxmox_resource_container">Contenedor</string>
     <string name="proxmox_resource_vm">Máquina virtual</string>
+
+    <!-- Mediary Scout -->
+    <string name="service_mediary_scout">Mediary Scout</string>
+    <string name="login_hint_mediary_scout">Introduce la URL de la instancia y el token de la API de agente. Para Docker, usa MEDIA_TRACK_AGENT_TOKEN. En la aplicación de escritorio, el token está en ~/.mediary/agent.json.</string>
+    <string name="mediary_scout_token">Token de la API de agente</string>
+    <string name="mediary_scout_api_not_found">La API de agente de Mediary Scout no está disponible. Comprueba la URL de la instancia y habilita el token de la API de agente.</string>
+    <string name="mediary_scout_library">Biblioteca</string>
+    <string name="mediary_scout_tasks">Tareas</string>
+    <string name="mediary_scout_notifications">Notificaciones</string>
+    <string name="mediary_scout_tracking">Elementos en seguimiento</string>
+    <string name="mediary_scout_active">En seguimiento</string>
+    <string name="mediary_scout_no_entries">Aún no hay elementos en seguimiento.</string>
+    <string name="mediary_scout_no_tasks">No hay tareas en cola ni en curso.</string>
+    <string name="mediary_scout_no_notifications">No hay notificaciones recientes.</string>
+    <string name="mediary_scout_season">Temporada %1$d</string>
+    <string name="mediary_scout_progress">%1$d de %2$d obtenidos</string>
+    <string name="mediary_scout_obtained">%1$d obtenidos</string>
+    <string name="mediary_scout_missing">Emitidos y pendientes: %1$s</string>
+    <string name="mediary_scout_movie">Película</string>
+    <string name="mediary_scout_tv">Serie</string>
+    <string name="mediary_scout_anime">Anime</string>
+    <string name="mediary_scout_queued">En cola</string>
+
+    <!-- GitHub updates and Docker notifications -->
+    <string name="github_update_title">Actualizaciones de GitHub</string>
+    <string name="github_update_check">Buscar actualizaciones</string>
+    <string name="github_update_checking">Consultando GitHub…</string>
+    <string name="github_update_current">Ya tienes la última versión.</string>
+    <string name="github_update_no_release">No hay un APK compatible publicado en GitHub.</string>
+    <string name="github_update_found">La actualización %1$s está disponible.</string>
+    <string name="github_update_download">Descargar APK</string>
+    <string name="github_update_downloading">Descargando y verificando el APK…</string>
+    <string name="github_update_install">Instalar actualización</string>
+    <string name="github_update_install_hint">Si Android solicita permiso, concédelo y vuelve a tocar Instalar actualización.</string>
+    <string name="github_update_error">No se pudo buscar o descargar la actualización. Inténtalo de nuevo.</string>
+    <string name="github_update_install_error">Android no pudo abrir el instalador del APK.</string>
+    <string name="github_update_incompatible">El paquete, la firma o la versión del APK no es compatible.</string>
+    <string name="docker_push_title">Notificaciones de Docker</string>
+    <string name="docker_push_connection_channel">Estado de la suscripción de Docker</string>
+    <string name="docker_push_service_running">Manteniendo activa la suscripción a ntfy</string>
+    <string name="docker_push_hint">Publica eventos de Docker en este tema de ntfy. Homelab mantiene una conexión en segundo plano mientras esté suscrito.</string>
+    <string name="docker_push_topic">URL HTTPS del tema de ntfy</string>
+    <string name="docker_push_token">Token de acceso de ntfy (opcional)</string>
+    <string name="docker_push_connect">Guardar y conectar</string>
+    <string name="docker_push_disconnect">Detener suscripción</string>
+    <string name="docker_push_stopped">Suscripción detenida</string>
+    <string name="docker_push_connecting">Conectando a ntfy…</string>
+    <string name="docker_push_connected">Conectado. Esperando mensajes de Docker.</string>
+    <string name="docker_push_reconnecting">Conexión perdida. Reconectando…</string>
+    <string name="docker_push_rejected">La suscripción falló. Comprueba la URL del tema y el token.</string>
+    <string name="docker_push_invalid_url">Introduce una URL HTTPS que termine en el nombre de un tema de ntfy.</string>
+    <string name="docker_push_error">No se pudo cambiar la suscripción de Docker.</string>
+    <string name="mediary_acquire_title">Buscar título</string>
+    <string name="mediary_acquire_hint">Elige un título y confirma la obtención.</string>
+    <string name="mediary_acquire_query">Título de la película o serie</string>
+    <string name="mediary_acquire_season">Temporada</string>
+    <string name="mediary_acquire_submit">Confirmar obtención</string>
+    <string name="mediary_search_submit">Buscar</string>
+    <string name="mediary_search_empty">No se encontraron títulos coincidentes.</string>
+    <string name="mediary_search_again">Volver a buscar</string>
+    <string name="mediary_search_server_required">Actualiza el servidor Mediary Scout para buscar y elegir un título antes de solicitarlo.</string>
+    <string name="nav_notifications">Notificaciones</string>
+    <string name="inbox_empty">Aquí aparecerán los nuevos mensajes de Docker y las alertas de servicio.</string>
 </resources>
