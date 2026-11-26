@@ -37,8 +37,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import android.app.Activity
-import android.view.WindowManager
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -57,7 +55,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -116,15 +113,6 @@ fun ServiceLoginScreen(
     var showHttpWarningDialog by remember { mutableStateOf(false) }
     var showSecret by remember { mutableStateOf(false) }
     var hasSubmitted by remember { mutableStateOf(false) }
-
-    val context = androidx.compose.ui.platform.LocalContext.current
-    DisposableEffect(Unit) {
-        val window = (context as? Activity)?.window
-        window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        onDispose {
-            window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
-    }
 
     val coroutineScope = rememberCoroutineScope()
     val shakeOffset = remember { Animatable(0f) }

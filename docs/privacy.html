@@ -113,7 +113,6 @@
       <ul>
         <li><strong>Hardware-Backed Secret Storage:</strong> Sensitive credentials (such as API keys and basic auth passwords) are encrypted using AES-256-GCM via the Android KeyStore (hardware-backed TEE / StrongBox).</li>
         <li><strong>PIN & Biometric Protection:</strong> PIN codes are salted and hashed with PBKDF2-HMAC-SHA256. Biometric authentication remains within the secure enclave of your Android hardware.</li>
-        <li><strong>Screenshot Protection:</strong> Sensitive screens enforce Android’s <code>FLAG_SECURE</code> to prevent background task snapshot capture.</li>
       </ul>
 
       <h2>3. Direct Network Connections</h2>

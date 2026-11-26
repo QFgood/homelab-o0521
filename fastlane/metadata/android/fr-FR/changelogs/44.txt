@@ -1,0 +1,2 @@
+Les captures d’écran sont désormais autorisées sur les écrans de connexion, de verrouillage, de code PIN et de sauvegarde.
+La version GitHub recherche les mises à jour dans QFgood/homelab-o0521.
