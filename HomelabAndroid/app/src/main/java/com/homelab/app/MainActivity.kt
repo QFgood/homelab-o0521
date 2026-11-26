@@ -68,12 +68,15 @@ class MainActivity : AppCompatActivity() {
     private var needsSetup by mutableStateOf(true)
     private var servicesReady by mutableStateOf(false)
     private var lastBackgroundTime: Long = 0L
+    private var pendingInbox by mutableStateOf(false)
     private var pendingShortcut by mutableStateOf<ShortcutTarget?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition { !servicesReady }
         super.onCreate(savedInstanceState)
+        pendingInbox = intent?.action == NotificationHelper.ACTION_OPEN_INBOX
+        if (pendingInbox) intent?.action = null
         pendingShortcut = AppShortcuts.parse(intent)
         publishLauncherShortcuts()
 
@@ -172,7 +175,9 @@ class MainActivity : AppCompatActivity() {
                     else -> {
                         AppNavigation(
                             pendingShortcut = pendingShortcut,
-                            onShortcutHandled = { pendingShortcut = null }
+                            onShortcutHandled = { pendingShortcut = null },
+                            pendingInbox = pendingInbox,
+                            onInboxHandled = { pendingInbox = false }
                         )
 
                     }
@@ -183,7 +188,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
-        AppShortcuts.parse(intent)?.let { pendingShortcut = it }
+        if (intent.action == NotificationHelper.ACTION_OPEN_INBOX) {
+            pendingShortcut = null
+            pendingInbox = true
+        } else {
+            AppShortcuts.parse(intent)?.let {
+                pendingInbox = false
+                pendingShortcut = it
+            }
+        }
     }
 
     /** Keeps the launcher shortcuts in sync with the home list order, visibility and instances. */

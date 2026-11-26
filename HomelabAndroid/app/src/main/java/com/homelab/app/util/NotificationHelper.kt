@@ -18,6 +18,7 @@ import com.homelab.app.MainActivity
 import com.homelab.app.R
 
 object NotificationHelper {
+    const val ACTION_OPEN_INBOX = "com.homelab.app.action.OPEN_NOTIFICATION_INBOX"
     const val CHANNEL_CRITICAL_ALERTS = "critical_alerts"
     const val CHANNEL_GENERAL_INFO = "general_info"
     private const val CHANNEL_DOCKER_EVENTS = "docker_events"
@@ -144,6 +145,7 @@ object NotificationHelper {
 
     private fun openAppIntent(context: Context): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
+            action = ACTION_OPEN_INBOX
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         return PendingIntent.getActivity(

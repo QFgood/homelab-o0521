@@ -2019,10 +2019,15 @@
     <string name="docker_push_rejected">订阅失败，请检查主题地址和访问令牌。</string>
     <string name="docker_push_invalid_url">请输入以 ntfy 主题名称结尾的 HTTPS 地址。</string>
     <string name="docker_push_error">无法更改 Docker 订阅。</string>
-    <string name="mediary_acquire_title">搜索并获取</string>
-    <string name="mediary_acquire_hint">巡影会搜索 TMDB。匹配明确时会立即下达获取任务。有多个匹配时，请选定要获取的条目。</string>
+    <string name="mediary_acquire_title">搜索影片</string>
+    <string name="mediary_acquire_hint">请选择正确的影片，再确认获取。</string>
     <string name="mediary_acquire_query">电影或剧集名称</string>
-    <string name="mediary_acquire_season">剧集季数（可选）</string>
-    <string name="mediary_acquire_submit">搜索并下达任务</string>
-    <string name="mediary_acquire_candidate">获取 %1$s</string>
+    <string name="mediary_acquire_season">季数</string>
+    <string name="mediary_acquire_submit">确认获取</string>
+    <string name="mediary_search_submit">搜索</string>
+    <string name="mediary_search_empty">没有找到匹配的影片。</string>
+    <string name="mediary_search_again">重新搜索</string>
+    <string name="mediary_search_server_required">当前巡影服务缺少独立搜索接口。请更新巡影服务端，再搜索选片。</string>
+    <string name="nav_notifications">通知</string>
+    <string name="inbox_empty">收到新的 Docker 消息或服务告警后，会显示在这里。</string>
 </resources>

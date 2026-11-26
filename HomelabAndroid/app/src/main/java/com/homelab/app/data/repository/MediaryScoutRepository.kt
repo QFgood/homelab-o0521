@@ -1,21 +1,19 @@
 package com.homelab.app.data.repository
 
+import com.homelab.app.data.remote.HtmlResponseException
 import com.homelab.app.data.remote.TlsClientSelector
 import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
 import com.homelab.app.data.remote.api.MediaryScoutAcquireResult
 import com.homelab.app.data.remote.api.MediaryScoutActivity
 import com.homelab.app.data.remote.api.MediaryScoutApi
 import com.homelab.app.data.remote.api.MediaryScoutEntry
+import com.homelab.app.data.remote.api.MediaryScoutSearchResult
 import com.homelab.app.domain.model.ServiceInstance
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import retrofit2.Retrofit
 
@@ -26,12 +24,13 @@ data class MediaryScoutDashboardData(
 
 class MediaryScoutApiUnavailable(cause: HttpException) : Exception(cause)
 
+class MediaryScoutSearchUnavailable(cause: Exception) : Exception(cause)
+
 @Singleton
 class MediaryScoutRepository @Inject constructor(
     private val api: MediaryScoutApi,
     private val retrofit: Retrofit,
-    private val tlsClientSelector: TlsClientSelector,
-    private val json: Json
+    private val tlsClientSelector: TlsClientSelector
 ) {
     suspend fun authenticate(instance: ServiceInstance) {
         val token = requireNotNull(instance.apiKey)
@@ -68,27 +67,21 @@ class MediaryScoutRepository @Inject constructor(
         MediaryScoutDashboardData(library.await().items, activity.await())
     }
 
-    suspend fun acquire(instanceId: String, request: MediaryScoutAcquireRequest): MediaryScoutAcquireResult =
-        checkAgentApi {
-            val response = api.acquire(instanceId, request)
-            if (response.isSuccessful) return@checkAgentApi checkNotNull(response.body())
-            val error = withContext(Dispatchers.IO) {
-                response.errorBody()?.use { body ->
-                    if (response.code() != 409 && response.code() != 404) return@use null
-                    try {
-                        json.decodeFromString<MediaryScoutAcquireResult>(body.string())
-                    } catch (_: SerializationException) {
-                        null
-                    }
-                }
-            }
-            if (response.code() == 409 && error?.status == "ambiguous" ||
-                response.code() == 404 && error?.status == "not_found"
-            ) {
-                return@checkAgentApi checkNotNull(error)
-            }
-            throw HttpException(response)
+    suspend fun search(instanceId: String, query: String, type: String?): MediaryScoutSearchResult {
+        try {
+            val results = api.search(instanceId, query, type)
+            return MediaryScoutSearchResult(results.items.filter { it.tmdbId > 0 && it.type in setOf("movie", "tv") })
+        } catch (error: HttpException) {
+            if (error.code() == 404) throw MediaryScoutSearchUnavailable(error)
+            throw error
+        } catch (error: HtmlResponseException) {
+            if (error.statusCode == 404) throw MediaryScoutSearchUnavailable(error)
+            throw error
         }
+    }
+
+    suspend fun acquire(instanceId: String, request: MediaryScoutAcquireRequest): MediaryScoutAcquireResult =
+        checkAgentApi { api.acquire(instanceId, request) }
 
     private suspend fun <T> checkAgentApi(request: suspend () -> T): T {
         try {

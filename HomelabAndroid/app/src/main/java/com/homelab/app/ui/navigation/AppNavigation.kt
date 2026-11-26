@@ -21,11 +21,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
@@ -71,7 +71,8 @@ sealed class Screen(
 ) {
     data object Home : Screen("home", R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home)
     data object Media : Screen("media", R.string.nav_media, Icons.Filled.PlayArrow, Icons.Outlined.PlayArrow)
-    data object Bookmarks : Screen("bookmarks", R.string.nav_bookmarks, Icons.Filled.Bookmark, Icons.Outlined.Bookmark)
+    // Keep the route ID so saved navigation stacks open the replacement tab after an update.
+    data object Notifications : Screen("bookmarks", R.string.nav_notifications, Icons.Filled.Notifications, Icons.Outlined.Notifications)
     data object Settings : Screen("settings", R.string.nav_settings, Icons.Filled.Settings, Icons.Outlined.Settings)
 }
 
@@ -132,7 +133,9 @@ private fun loginRoute(type: ServiceType, instanceId: String? = null): String {
 @Composable
 fun AppNavigation(
     pendingShortcut: com.homelab.app.util.ShortcutTarget? = null,
-    onShortcutHandled: () -> Unit = {}
+    onShortcutHandled: () -> Unit = {},
+    pendingInbox: Boolean = false,
+    onInboxHandled: () -> Unit = {}
 ) {
     val navController = rememberNavController()
     androidx.compose.runtime.LaunchedEffect(pendingShortcut) {
@@ -140,7 +143,15 @@ fun AppNavigation(
         navController.navigate(dashboardRoute(target.type, target.instanceId)) { launchSingleTop = true }
         onShortcutHandled()
     }
-    val items = listOf(Screen.Home, Screen.Media, Screen.Bookmarks, Screen.Settings)
+    androidx.compose.runtime.LaunchedEffect(pendingInbox) {
+        if (!pendingInbox) return@LaunchedEffect
+        navController.navigate(Screen.Notifications.route) {
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
+        onInboxHandled()
+    }
+    val items = listOf(Screen.Home, Screen.Media, Screen.Notifications, Screen.Settings)
     var configuredServicesUnlocked by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -260,8 +271,8 @@ fun AppNavigation(
                 )
             }
 
-            composable(Screen.Bookmarks.route) {
-                com.homelab.app.ui.bookmarks.BookmarksScreen()
+            composable(Screen.Notifications.route) {
+                com.homelab.app.ui.notifications.NotificationInboxScreen()
             }
 
             composable(Screen.Settings.route) {

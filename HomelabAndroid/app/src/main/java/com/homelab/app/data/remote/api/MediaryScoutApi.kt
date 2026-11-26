@@ -2,7 +2,6 @@ package com.homelab.app.data.remote.api
 
 import com.homelab.app.data.remote.NO_FALLBACK_REPLAY_HEADER
 import kotlinx.serialization.Serializable
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -27,35 +26,47 @@ interface MediaryScoutApi {
         @Query("limit") limit: Int = 20
     ): MediaryScoutActivity
 
+    @Headers("Accept: application/json")
+    @GET("api/agent/search")
+    suspend fun search(
+        @Header("X-Homelab-Instance-Id") instanceId: String,
+        @Query("query") query: String,
+        @Query("type") type: String?
+    ): MediaryScoutSearchResult
+
     @Headers("Accept: application/json", "$NO_FALLBACK_REPLAY_HEADER: true")
     @POST("api/agent/acquire")
     suspend fun acquire(
         @Header("X-Homelab-Instance-Id") instanceId: String,
         @Body request: MediaryScoutAcquireRequest
-    ): Response<MediaryScoutAcquireResult>
+    ): MediaryScoutAcquireResult
 }
 
 @Serializable
 data class MediaryScoutAcquireRequest(
-    val query: String,
-    val type: String? = null,
-    val season: Int? = null,
-    val tmdbId: Long? = null
+    val tmdbId: Long,
+    val type: String,
+    val season: Int? = null
 )
 
 @Serializable
 data class MediaryScoutAcquireResult(
     val status: String,
-    val message: String,
-    val candidates: List<MediaryScoutCandidate> = emptyList()
+    val message: String
 )
+
+@Serializable
+data class MediaryScoutSearchResult(val items: List<MediaryScoutCandidate>)
 
 @Serializable
 data class MediaryScoutCandidate(
     val tmdbId: Long,
     val title: String,
     val year: Int? = null,
-    val type: String
+    val type: String,
+    val originalTitle: String = "",
+    val overview: String = "",
+    val seasonNumbers: List<Int> = emptyList()
 )
 
 @Serializable

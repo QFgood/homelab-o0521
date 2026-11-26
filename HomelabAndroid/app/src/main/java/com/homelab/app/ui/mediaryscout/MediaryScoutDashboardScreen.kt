@@ -77,9 +77,12 @@ fun MediaryScoutDashboardScreen(
     var tab by rememberSaveable { mutableStateOf(DashboardTab.LIBRARY) }
     var showAcquire by rememberSaveable { mutableStateOf(false) }
     val acquireState by viewModel.acquireState.collectAsStateWithLifecycle()
+    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
     if (showAcquire) {
         MediaryScoutAcquireDialog(
-            state = acquireState,
+            searchState = searchState,
+            acquireState = acquireState,
+            onSearch = viewModel::search,
             onSubmit = viewModel::acquire,
             onEdit = viewModel::resetAcquire,
             onDismiss = {

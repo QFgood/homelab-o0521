@@ -2024,9 +2024,14 @@
     <string name="docker_push_invalid_url">Enter an HTTPS URL ending in an ntfy topic name.</string>
     <string name="docker_push_error">Could not change the Docker subscription.</string>
     <string name="mediary_acquire_title">Search and acquire</string>
-    <string name="mediary_acquire_hint">Mediary Scout searches TMDB. A single clear match is sent to the agent immediately. If several titles match, choose one to send.</string>
+    <string name="mediary_acquire_hint">Select a title, then confirm acquisition.</string>
     <string name="mediary_acquire_query">Movie or series title</string>
-    <string name="mediary_acquire_season">Season for a series (optional)</string>
-    <string name="mediary_acquire_submit">Search and submit</string>
-    <string name="mediary_acquire_candidate">Acquire %1$s</string>
+    <string name="mediary_acquire_season">Season</string>
+    <string name="mediary_acquire_submit">Confirm acquisition</string>
+    <string name="mediary_search_submit">Search</string>
+    <string name="mediary_search_empty">No matching titles found.</string>
+    <string name="mediary_search_again">Search again</string>
+    <string name="mediary_search_server_required">This Mediary Scout server does not provide separate media search. Update the server to select a title before requesting it.</string>
+    <string name="nav_notifications">Notifications</string>
+    <string name="inbox_empty">New Docker messages and service alerts will appear here.</string>
 </resources>

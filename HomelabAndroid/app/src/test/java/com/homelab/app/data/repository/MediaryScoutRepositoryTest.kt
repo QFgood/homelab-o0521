@@ -98,42 +98,50 @@ class MediaryScoutRepositoryTest {
     }
 
     @Test
-    fun `acquisition returns ambiguous candidates and submits an explicit selection`() = runTest {
+    fun `single result stays read only until selected ID is submitted`() = runTest {
         val json = Json { ignoreUnknownKeys = true }
+        val requests = ConcurrentLinkedQueue<Request>()
         val repository = repository { request ->
-            assertEquals("/api/agent/acquire", request.url.encodedPath)
-            assertEquals("POST", request.method)
+            requests.add(request)
             assertEquals(instance.id, request.header("X-Homelab-Instance-Id"))
-            val buffer = Buffer()
-            requireNotNull(request.body).writeTo(buffer)
-            val input = json.decodeFromString<MediaryScoutAcquireRequest>(buffer.readUtf8())
-            assertEquals(2, input.season)
-            if (input.tmdbId == null) {
-                409 to """{"status":"ambiguous","message":"Choose","candidates":[
-                    {"tmdbId":12,"title":"Example","year":2026,"type":"tv","score":150}]}"""
+            if (request.method == "GET") {
+                assertEquals("/api/agent/search", request.url.encodedPath)
+                assertEquals("同名剧集", request.url.queryParameter("query"))
+                assertEquals("tv", request.url.queryParameter("type"))
+                200 to """{"items":[{"tmdbId":12,"title":"同名剧集","type":"tv","year":2026,
+                    "originalTitle":"Example","seasonNumbers":[1,2]}]}"""
             } else {
-                assertEquals(12L, input.tmdbId)
-                assertEquals("tv", input.type)
-                200 to """{"status":"requested","message":"Queued","workflowRunId":"run"}"""
+                assertEquals("POST", request.method)
+                assertEquals("/api/agent/acquire", request.url.encodedPath)
+                val buffer = Buffer()
+                requireNotNull(request.body).writeTo(buffer)
+                val body = buffer.readUtf8()
+                val input = json.decodeFromString<MediaryScoutAcquireRequest>(body)
+                assertEquals(MediaryScoutAcquireRequest(12, "tv", 2), input)
+                assertEquals(false, body.contains("query"))
+                200 to """{"status":"requested","message":"Queued"}"""
             }
         }
-        val input = MediaryScoutAcquireRequest(query = "Example", season = 2)
-        val candidates = repository.acquire(instance.id, input).candidates
-        val selection = candidates.single()
-        assertEquals("Example", selection.title)
-        assertEquals("requested", repository.acquire(
-            instance.id, input.copy(tmdbId = selection.tmdbId, type = selection.type)
-        ).status)
+        val selected = repository.search(instance.id, "同名剧集", "tv").items.single()
+        assertEquals(listOf("GET"), requests.map { it.method })
+        assertEquals(listOf(1, 2), selected.seasonNumbers)
+        val result = repository.acquire(
+            instance.id, MediaryScoutAcquireRequest(selected.tmdbId, selected.type, 2)
+        )
+        assertEquals("requested", result.status)
+        assertEquals(listOf("GET", "POST"), requests.map { it.method })
     }
 
     @Test
-    fun `acquisition distinguishes an empty search from a disabled endpoint`() = runTest {
-        val empty = repository { 404 to """{"status":"not_found","message":"Missing"}""" }
-        val disabled = repository { 404 to """{"error":"not found"}""" }
-        val request = MediaryScoutAcquireRequest(query = "Missing")
-        assertEquals("not_found", empty.acquire(instance.id, request).status)
-        val failure = runCatching { disabled.acquire(instance.id, request) }.exceptionOrNull()
-        assertEquals(MediaryScoutApiUnavailable::class.java, failure?.javaClass)
+    fun `older server missing search returns update error without submitting a task`() = runTest {
+        val requests = ConcurrentLinkedQueue<Request>()
+        val oldServer = repository { request ->
+            requests.add(request)
+            404 to """{"error":"not found"}"""
+        }
+        val failure = runCatching { oldServer.search(instance.id, "Example", null) }.exceptionOrNull()
+        assertEquals(MediaryScoutSearchUnavailable::class.java, failure?.javaClass)
+        assertEquals(listOf("GET"), requests.map { it.method })
     }
 
     private fun repository(respond: (Request) -> Pair<Int, String>): MediaryScoutRepository {
@@ -158,7 +166,7 @@ class MediaryScoutRepositoryTest {
         val tlsClientSelector = mockk<TlsClientSelector>()
         every { tlsClientSelector.clientForInstance(instance) } returns client
 
-        return MediaryScoutRepository(retrofit.create(MediaryScoutApi::class.java), retrofit, tlsClientSelector, json)
+        return MediaryScoutRepository(retrofit.create(MediaryScoutApi::class.java), retrofit, tlsClientSelector)
     }
 
     private companion object {

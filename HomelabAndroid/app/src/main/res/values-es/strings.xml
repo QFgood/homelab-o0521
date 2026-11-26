@@ -2019,10 +2019,15 @@
     <string name="docker_push_rejected">La suscripción falló. Comprueba la URL del tema y el token.</string>
     <string name="docker_push_invalid_url">Introduce una URL HTTPS que termine en el nombre de un tema de ntfy.</string>
     <string name="docker_push_error">No se pudo cambiar la suscripción de Docker.</string>
-    <string name="mediary_acquire_title">Buscar y obtener</string>
-    <string name="mediary_acquire_hint">Mediary Scout busca en TMDB. Si hay una coincidencia clara, la envía de inmediato al agente. Si hay varias, elige cuál enviar.</string>
+    <string name="mediary_acquire_title">Buscar título</string>
+    <string name="mediary_acquire_hint">Elige un título y confirma la obtención.</string>
     <string name="mediary_acquire_query">Título de la película o serie</string>
-    <string name="mediary_acquire_season">Temporada de la serie (opcional)</string>
-    <string name="mediary_acquire_submit">Buscar y enviar</string>
-    <string name="mediary_acquire_candidate">Obtener %1$s</string>
+    <string name="mediary_acquire_season">Temporada</string>
+    <string name="mediary_acquire_submit">Confirmar obtención</string>
+    <string name="mediary_search_submit">Buscar</string>
+    <string name="mediary_search_empty">No se encontraron títulos coincidentes.</string>
+    <string name="mediary_search_again">Volver a buscar</string>
+    <string name="mediary_search_server_required">Actualiza el servidor Mediary Scout para buscar y elegir un título antes de solicitarlo.</string>
+    <string name="nav_notifications">Notificaciones</string>
+    <string name="inbox_empty">Aquí aparecerán los nuevos mensajes de Docker y las alertas de servicio.</string>
 </resources>

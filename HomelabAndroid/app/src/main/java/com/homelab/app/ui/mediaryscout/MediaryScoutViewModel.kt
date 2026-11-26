@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
 import com.homelab.app.data.remote.api.MediaryScoutAcquireResult
+import com.homelab.app.data.remote.api.MediaryScoutCandidate
+import com.homelab.app.data.remote.api.MediaryScoutSearchResult
 import com.homelab.app.data.repository.MediaryScoutDashboardData
 import com.homelab.app.data.repository.MediaryScoutRepository
 import com.homelab.app.data.repository.ServicesRepository
@@ -39,6 +41,8 @@ class MediaryScoutViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState<MediaryScoutDashboardData>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
+    private val _searchState = MutableStateFlow<UiState<MediaryScoutSearchResult>>(UiState.Idle)
+    val searchState = _searchState.asStateFlow()
     private val _acquireState = MutableStateFlow<UiState<MediaryScoutAcquireResult>>(UiState.Idle)
     val acquireState = _acquireState.asStateFlow()
     private var refreshJob: Job? = null
@@ -48,12 +52,38 @@ class MediaryScoutViewModel @Inject constructor(
         refresh()
     }
 
-    fun acquire(request: MediaryScoutAcquireRequest) {
-        if (_acquireState.value == UiState.Loading) return
+    fun search(query: String, type: String?) {
+        val name = query.trim()
+        if (name.isBlank() || name.length > 256 ||
+            _searchState.value == UiState.Loading || _acquireState.value == UiState.Loading
+        ) return
+        _acquireState.value = UiState.Idle
+        _searchState.value = UiState.Loading
+        viewModelScope.launch {
+            try {
+                _searchState.value = UiState.Success(repository.search(instanceId, name, type))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _searchState.value = UiState.Error(ErrorHandler.getMessage(context, error))
+            }
+        }
+    }
+
+    fun acquire(candidate: MediaryScoutCandidate, season: Int?) {
+        val results = (_searchState.value as? UiState.Success)?.data ?: return
+        val state = _acquireState.value
+        if (candidate !in results.items || state == UiState.Loading || state is UiState.Success) return
+        if (candidate.type == "tv" && season != null &&
+            (season < 0 || (candidate.seasonNumbers.isNotEmpty() && season !in candidate.seasonNumbers))
+        ) return
         _acquireState.value = UiState.Loading
         viewModelScope.launch {
             try {
-                val result = repository.acquire(instanceId, request)
+                val result = repository.acquire(instanceId, MediaryScoutAcquireRequest(
+                    tmdbId = candidate.tmdbId, type = candidate.type,
+                    season = season.takeIf { candidate.type == "tv" }
+                ))
                 _acquireState.value = UiState.Success(result)
                 if (result.status in setOf("requested", "reserved", "already_tracked")) refresh()
             } catch (error: CancellationException) {
@@ -65,7 +95,9 @@ class MediaryScoutViewModel @Inject constructor(
     }
 
     fun resetAcquire() {
-        if (_acquireState.value != UiState.Loading) _acquireState.value = UiState.Idle
+        if (_acquireState.value == UiState.Loading || _searchState.value == UiState.Loading) return
+        _searchState.value = UiState.Idle
+        _acquireState.value = UiState.Idle
     }
 
     fun refresh() {

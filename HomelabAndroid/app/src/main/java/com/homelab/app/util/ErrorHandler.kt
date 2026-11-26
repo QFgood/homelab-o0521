@@ -5,6 +5,7 @@ import com.homelab.app.R
 import com.homelab.app.data.remote.HtmlResponseException
 import com.homelab.app.data.repository.CraftyApiException
 import com.homelab.app.data.repository.MediaryScoutApiUnavailable
+import com.homelab.app.data.repository.MediaryScoutSearchUnavailable
 import com.homelab.app.data.repository.PatchmonApiException
 import com.homelab.app.data.repository.WakapiApiException
 import kotlinx.serialization.SerializationException
@@ -31,6 +32,7 @@ object ErrorHandler {
             is SocketTimeoutException -> context.getString(R.string.error_timeout)
             is SerializationException -> context.getString(R.string.error_parsing)
             is MediaryScoutApiUnavailable -> context.getString(R.string.mediary_scout_api_not_found)
+            is MediaryScoutSearchUnavailable -> context.getString(R.string.mediary_search_server_required)
             is IOException -> context.getString(R.string.error_network)
             is HttpException -> {
                 when (error.code()) {

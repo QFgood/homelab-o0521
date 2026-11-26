@@ -28,6 +28,7 @@ class DockerPushService : Service() {
     @Inject lateinit var repository: DockerPushRepository
     @Inject lateinit var preferences: LocalPreferencesRepository
     @Inject lateinit var ntfy: NtfyClient
+    @Inject lateinit var inbox: NotificationInbox
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var subscription: Job? = null
@@ -83,6 +84,12 @@ class DockerPushService : Service() {
                         "message" -> {
                             if (event.id.isNotBlank() && event.id != repository.cursor(settings.topicUrl)) {
                                 val context = preferences.languageMode.first().localizedContext(this)
+                                inbox.record(InboxNotification(
+                                    id = "docker:${event.id}",
+                                    source = NotificationSource.DOCKER,
+                                    title = event.title.ifBlank { context.getString(com.homelab.app.R.string.docker_push_title) },
+                                    message = event.message
+                                ))
                                 if (NotificationHelper.notifyDocker(context, event.id, event.title, event.message)) {
                                     repository.advance(settings.topicUrl, event.id)
                                 } else {
