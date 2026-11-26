@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
+import com.homelab.app.data.remote.api.MediaryScoutAcquireResult
 import com.homelab.app.data.repository.MediaryScoutDashboardData
 import com.homelab.app.data.repository.MediaryScoutRepository
 import com.homelab.app.data.repository.ServicesRepository
@@ -37,11 +39,33 @@ class MediaryScoutViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState<MediaryScoutDashboardData>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
+    private val _acquireState = MutableStateFlow<UiState<MediaryScoutAcquireResult>>(UiState.Idle)
+    val acquireState = _acquireState.asStateFlow()
     private var refreshJob: Job? = null
     private var selectionJob: Job? = null
 
     init {
         refresh()
+    }
+
+    fun acquire(request: MediaryScoutAcquireRequest) {
+        if (_acquireState.value == UiState.Loading) return
+        _acquireState.value = UiState.Loading
+        viewModelScope.launch {
+            try {
+                val result = repository.acquire(instanceId, request)
+                _acquireState.value = UiState.Success(result)
+                if (result.status in setOf("requested", "reserved", "already_tracked")) refresh()
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _acquireState.value = UiState.Error(ErrorHandler.getMessage(context, error))
+            }
+        }
+    }
+
+    fun resetAcquire() {
+        if (_acquireState.value != UiState.Loading) _acquireState.value = UiState.Idle
     }
 
     fun refresh() {

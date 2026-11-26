@@ -2019,4 +2019,10 @@
     <string name="docker_push_rejected">Sottoscrizione non riuscita. Controlla l’URL e il token di accesso.</string>
     <string name="docker_push_invalid_url">Inserisci un URL HTTPS che termini con il nome di un argomento ntfy.</string>
     <string name="docker_push_error">Impossibile modificare la sottoscrizione Docker.</string>
+    <string name="mediary_acquire_title">Cerca e acquisisci</string>
+    <string name="mediary_acquire_hint">Mediary Scout cerca in TMDB. Un risultato univoco viene inviato subito all’agente. Se ci sono più corrispondenze, scegli quale inviare.</string>
+    <string name="mediary_acquire_query">Titolo del film o della serie</string>
+    <string name="mediary_acquire_season">Stagione della serie (facoltativo)</string>
+    <string name="mediary_acquire_submit">Cerca e invia</string>
+    <string name="mediary_acquire_candidate">Acquisisci %1$s</string>
 </resources>

@@ -2,6 +2,7 @@ package com.homelab.app.data.repository
 
 import com.homelab.app.data.remote.TlsClientSelector
 import com.homelab.app.data.remote.api.MediaryScoutApi
+import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
 import com.homelab.app.data.security.ServiceUrlNormalizer
 import com.homelab.app.domain.model.ServiceInstance
 import com.homelab.app.util.ServiceType
@@ -16,6 +17,7 @@ import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
+import okio.Buffer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -95,6 +97,45 @@ class MediaryScoutRepositoryTest {
         )
     }
 
+    @Test
+    fun `acquisition returns ambiguous candidates and submits an explicit selection`() = runTest {
+        val json = Json { ignoreUnknownKeys = true }
+        val repository = repository { request ->
+            assertEquals("/api/agent/acquire", request.url.encodedPath)
+            assertEquals("POST", request.method)
+            assertEquals(instance.id, request.header("X-Homelab-Instance-Id"))
+            val buffer = Buffer()
+            requireNotNull(request.body).writeTo(buffer)
+            val input = json.decodeFromString<MediaryScoutAcquireRequest>(buffer.readUtf8())
+            assertEquals(2, input.season)
+            if (input.tmdbId == null) {
+                409 to """{"status":"ambiguous","message":"Choose","candidates":[
+                    {"tmdbId":12,"title":"Example","year":2026,"type":"tv","score":150}]}"""
+            } else {
+                assertEquals(12L, input.tmdbId)
+                assertEquals("tv", input.type)
+                200 to """{"status":"requested","message":"Queued","workflowRunId":"run"}"""
+            }
+        }
+        val input = MediaryScoutAcquireRequest(query = "Example", season = 2)
+        val candidates = repository.acquire(instance.id, input).candidates
+        val selection = candidates.single()
+        assertEquals("Example", selection.title)
+        assertEquals("requested", repository.acquire(
+            instance.id, input.copy(tmdbId = selection.tmdbId, type = selection.type)
+        ).status)
+    }
+
+    @Test
+    fun `acquisition distinguishes an empty search from a disabled endpoint`() = runTest {
+        val empty = repository { 404 to """{"status":"not_found","message":"Missing"}""" }
+        val disabled = repository { 404 to """{"error":"not found"}""" }
+        val request = MediaryScoutAcquireRequest(query = "Missing")
+        assertEquals("not_found", empty.acquire(instance.id, request).status)
+        val failure = runCatching { disabled.acquire(instance.id, request) }.exceptionOrNull()
+        assertEquals(MediaryScoutApiUnavailable::class.java, failure?.javaClass)
+    }
+
     private fun repository(respond: (Request) -> Pair<Int, String>): MediaryScoutRepository {
         val jsonType = "application/json".toMediaType()
         val client = OkHttpClient.Builder().addInterceptor { chain ->
@@ -108,15 +149,16 @@ class MediaryScoutRepositoryTest {
                 .body(body.toResponseBody(jsonType))
                 .build()
         }.build()
+        val json = Json { ignoreUnknownKeys = true }
         val retrofit = Retrofit.Builder()
             .baseUrl("https://placeholder.local/")
             .client(client)
-            .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory(jsonType))
+            .addConverterFactory(json.asConverterFactory(jsonType))
             .build()
         val tlsClientSelector = mockk<TlsClientSelector>()
         every { tlsClientSelector.clientForInstance(instance) } returns client
 
-        return MediaryScoutRepository(retrofit.create(MediaryScoutApi::class.java), retrofit, tlsClientSelector)
+        return MediaryScoutRepository(retrofit.create(MediaryScoutApi::class.java), retrofit, tlsClientSelector, json)
     }
 
     private companion object {

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -74,6 +75,22 @@ fun MediaryScoutDashboardScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val instances by viewModel.instances.collectAsStateWithLifecycle()
     var tab by rememberSaveable { mutableStateOf(DashboardTab.LIBRARY) }
+    var showAcquire by rememberSaveable { mutableStateOf(false) }
+    val acquireState by viewModel.acquireState.collectAsStateWithLifecycle()
+    if (showAcquire) {
+        MediaryScoutAcquireDialog(
+            state = acquireState,
+            onSubmit = viewModel::acquire,
+            onEdit = viewModel::resetAcquire,
+            onDismiss = {
+                if ((acquireState as? UiState.Success)?.data?.status == "requested") {
+                    tab = DashboardTab.TASKS
+                }
+                viewModel.resetAcquire()
+                showAcquire = false
+            }
+        )
+    }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -115,6 +132,12 @@ fun MediaryScoutDashboardScreen(
                 )
                 is UiState.Error -> ErrorScreen(message = current.message, onRetry = viewModel::refresh)
                 is UiState.Success -> {
+                    FilledTonalButton(
+                        onClick = { showAcquire = true },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    ) {
+                        Text(stringResource(R.string.mediary_acquire_title))
+                    }
                     SecondaryTabRow(selectedTabIndex = tab.ordinal) {
                         DashboardTab.entries.forEach { option ->
                             Tab(

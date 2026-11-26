@@ -2016,4 +2016,10 @@
     <string name="docker_push_rejected">Abonnement fehlgeschlagen. Prüfe Themen-URL und Zugriffstoken.</string>
     <string name="docker_push_invalid_url">Gib eine HTTPS-URL ein, die mit einem ntfy-Themennamen endet.</string>
     <string name="docker_push_error">Docker-Abonnement konnte nicht geändert werden.</string>
+    <string name="mediary_acquire_title">Suchen und abrufen</string>
+    <string name="mediary_acquire_hint">Mediary Scout sucht in TMDB. Ein eindeutiger Treffer wird sofort an den Agenten gesendet. Wähle bei mehreren Treffern einen Titel aus.</string>
+    <string name="mediary_acquire_query">Film- oder Serientitel</string>
+    <string name="mediary_acquire_season">Staffel der Serie (optional)</string>
+    <string name="mediary_acquire_submit">Suchen und senden</string>
+    <string name="mediary_acquire_candidate">%1$s abrufen</string>
 </resources>
