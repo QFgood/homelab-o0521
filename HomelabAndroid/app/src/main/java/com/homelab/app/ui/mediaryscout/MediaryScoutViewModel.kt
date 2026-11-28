@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
 import com.homelab.app.data.remote.api.MediaryScoutAcquireResult
 import com.homelab.app.data.remote.api.MediaryScoutCandidate
-import com.homelab.app.data.remote.api.MediaryScoutConfig
-import com.homelab.app.data.remote.api.MediaryScoutConfigUpdate
 import com.homelab.app.data.remote.api.MediaryScoutSearchResult
 import com.homelab.app.data.repository.MediaryScoutDashboardData
 import com.homelab.app.data.repository.MediaryScoutRepository
@@ -47,10 +45,6 @@ class MediaryScoutViewModel @Inject constructor(
     val searchState = _searchState.asStateFlow()
     private val _acquireState = MutableStateFlow<UiState<MediaryScoutAcquireResult>>(UiState.Idle)
     val acquireState = _acquireState.asStateFlow()
-    private val _configState = MutableStateFlow<UiState<MediaryScoutConfig>>(UiState.Idle)
-    val configState = _configState.asStateFlow()
-    private val _saveState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
-    val saveState = _saveState.asStateFlow()
     private val _patrolState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val patrolState = _patrolState.asStateFlow()
     private var refreshJob: Job? = null
@@ -104,19 +98,6 @@ class MediaryScoutViewModel @Inject constructor(
 
     fun clearAcquisition() {
         if (_acquireState.value != UiState.Loading) _acquireState.value = UiState.Idle
-    }
-
-    fun loadConfig() {
-        if (_configState.value == UiState.Loading || _saveState.value == UiState.Loading) return
-        _saveState.value = UiState.Idle
-        runRequest(_configState) { repository.getConfig(instanceId) }
-    }
-
-    fun saveConfig(update: MediaryScoutConfigUpdate) {
-        if (_configState.value !is UiState.Success) return
-        runRequest(_saveState) {
-            _configState.value = UiState.Success(repository.saveConfig(instanceId, update))
-        }
     }
 
     fun runPatrol() {

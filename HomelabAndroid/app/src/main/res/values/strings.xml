@@ -2026,12 +2026,6 @@
     <string name="mediary_scout_activity">Activity</string>
     <string name="mediary_scout_patrol">Run patrol now</string>
     <string name="mediary_scout_patrol_done">Patrol request complete</string>
-    <string name="mediary_scout_quality">Quality preference</string>
-    <string name="mediary_scout_language">Preferred language</string>
-    <string name="mediary_scout_sweep_time">Daily patrol time (HH:mm)</string>
-    <string name="mediary_scout_storage">Connected storage</string>
-    <string name="mediary_scout_high">High</string>
-    <string name="mediary_scout_medium">Medium</string>
     <string name="mediary_acquire_title">Search and acquire</string>
     <string name="mediary_acquire_hint">Select a title, then confirm acquisition.</string>
     <string name="mediary_acquire_query">Movie or series title</string>

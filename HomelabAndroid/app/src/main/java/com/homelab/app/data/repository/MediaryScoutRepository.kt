@@ -6,7 +6,6 @@ import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
 import com.homelab.app.data.remote.api.MediaryScoutAcquireResult
 import com.homelab.app.data.remote.api.MediaryScoutActivity
 import com.homelab.app.data.remote.api.MediaryScoutApi
-import com.homelab.app.data.remote.api.MediaryScoutConfigUpdate
 import com.homelab.app.data.remote.api.MediaryScoutEntry
 import com.homelab.app.data.remote.api.MediaryScoutSearchResult
 import com.homelab.app.domain.model.ServiceInstance
@@ -83,11 +82,6 @@ class MediaryScoutRepository @Inject constructor(
 
     suspend fun acquire(instanceId: String, request: MediaryScoutAcquireRequest): MediaryScoutAcquireResult =
         checkAgentApi { api.acquire(instanceId, request) }
-
-    suspend fun getConfig(instanceId: String) = checkAgentApi { api.getConfig(instanceId) }
-
-    suspend fun saveConfig(instanceId: String, update: MediaryScoutConfigUpdate) =
-        checkAgentApi { api.updateConfig(instanceId, update).config }
 
     suspend fun runPatrol(instanceId: String) = checkAgentApi { api.runPatrol(instanceId) }
 

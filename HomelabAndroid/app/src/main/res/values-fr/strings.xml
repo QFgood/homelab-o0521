@@ -2022,12 +2022,6 @@
     <string name="mediary_scout_activity">Activité</string>
     <string name="mediary_scout_patrol">Lancer la vérification</string>
     <string name="mediary_scout_patrol_done">Demande de vérification terminée</string>
-    <string name="mediary_scout_quality">Qualité préférée</string>
-    <string name="mediary_scout_language">Langue préférée</string>
-    <string name="mediary_scout_sweep_time">Heure de vérification (HH:mm)</string>
-    <string name="mediary_scout_storage">Stockage connecté</string>
-    <string name="mediary_scout_high">Haute</string>
-    <string name="mediary_scout_medium">Moyenne</string>
     <string name="mediary_acquire_title">Rechercher un titre</string>
     <string name="mediary_acquire_hint">Sélectionnez un titre, puis confirmez la récupération.</string>
     <string name="mediary_acquire_query">Titre du film ou de la série</string>

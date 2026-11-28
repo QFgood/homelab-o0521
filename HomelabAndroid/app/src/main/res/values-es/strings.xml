@@ -2022,12 +2022,6 @@
     <string name="mediary_scout_activity">Actividad</string>
     <string name="mediary_scout_patrol">Iniciar revisión</string>
     <string name="mediary_scout_patrol_done">Solicitud de revisión completada</string>
-    <string name="mediary_scout_quality">Calidad preferida</string>
-    <string name="mediary_scout_language">Idioma preferido</string>
-    <string name="mediary_scout_sweep_time">Hora de revisión diaria (HH:mm)</string>
-    <string name="mediary_scout_storage">Almacenamiento conectado</string>
-    <string name="mediary_scout_high">Alta</string>
-    <string name="mediary_scout_medium">Media</string>
     <string name="mediary_acquire_title">Buscar título</string>
     <string name="mediary_acquire_hint">Elige un título y confirma la obtención.</string>
     <string name="mediary_acquire_query">Título de la película o serie</string>

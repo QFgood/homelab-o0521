@@ -21,10 +21,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.CircularProgressIndicator
@@ -71,8 +69,7 @@ private enum class DashboardTab(@StringRes val label: Int, val icon: ImageVector
     SEARCH(R.string.mediary_search_submit, Icons.Default.Search),
     LIBRARY(R.string.mediary_scout_library, Icons.Default.VideoLibrary),
     NOTIFICATIONS(R.string.mediary_scout_notifications, Icons.Default.Notifications),
-    TASKS(R.string.mediary_scout_activity, Icons.Default.Timeline),
-    SETTINGS(R.string.nav_settings, Icons.Default.Settings)
+    TASKS(R.string.mediary_scout_activity, Icons.Default.Timeline)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,13 +85,7 @@ fun MediaryScoutDashboardScreen(
     val tabState = rememberSaveableStateHolder()
     val acquireState by viewModel.acquireState.collectAsStateWithLifecycle()
     val searchState by viewModel.searchState.collectAsStateWithLifecycle()
-    val configState by viewModel.configState.collectAsStateWithLifecycle()
-    val saveState by viewModel.saveState.collectAsStateWithLifecycle()
     val patrolState by viewModel.patrolState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(tab) {
-        if (tab == DashboardTab.SETTINGS && configState == UiState.Idle) viewModel.loadConfig()
-    }
 
     Scaffold(
         bottomBar = {
@@ -124,9 +115,8 @@ fun MediaryScoutDashboardScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { if (tab == DashboardTab.SETTINGS) viewModel.loadConfig() else viewModel.refresh() },
-                        enabled = if (tab == DashboardTab.SETTINGS) configState != UiState.Loading && saveState != UiState.Loading
-                        else state != UiState.Loading
+                        onClick = viewModel::refresh,
+                        enabled = state != UiState.Loading
                     ) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
                     }
@@ -140,6 +130,7 @@ fun MediaryScoutDashboardScreen(
                 selectedInstanceId = viewModel.instanceId,
                 onInstanceSelected = { instance -> viewModel.selectInstance(instance.id, onNavigateToInstance) },
                 label = stringResource(R.string.service_instance_label),
+                showAddInstance = false,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
 
@@ -155,12 +146,6 @@ fun MediaryScoutDashboardScreen(
                             viewModel.clearAcquisition()
                             if (requested) tab = DashboardTab.TASKS
                         }
-                    )
-                    DashboardTab.SETTINGS -> MediaryScoutSettingsPanel(
-                        state = configState,
-                        saveState = saveState,
-                        onRetry = viewModel::loadConfig,
-                        onSave = viewModel::saveConfig
                     )
                     else -> {
                         if (tab == DashboardTab.TASKS) {

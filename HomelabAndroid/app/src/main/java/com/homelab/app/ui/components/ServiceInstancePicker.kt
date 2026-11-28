@@ -50,10 +50,11 @@ fun ServiceInstancePicker(
     selectedInstanceId: String,
     onInstanceSelected: (ServiceInstance) -> Unit,
     modifier: Modifier = Modifier,
-    label: String? = null
+    label: String? = null,
+    showAddInstance: Boolean = true
 ) {
     if (instances.isEmpty()) return
-    val onAddInstance = LocalAddServiceInstance.current
+    val onAddInstance = LocalAddServiceInstance.current.takeIf { showAddInstance }
     val serviceType = instances.first().type
     if (instances.size == 1) {
         if (onAddInstance != null) AddInstanceButton(serviceType, onAddInstance, modifier)

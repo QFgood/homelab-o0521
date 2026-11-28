@@ -4,7 +4,6 @@ import com.homelab.app.data.remote.TlsClientSelector
 import com.homelab.app.data.remote.NO_FALLBACK_REPLAY_HEADER
 import com.homelab.app.data.remote.api.MediaryScoutApi
 import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
-import com.homelab.app.data.remote.api.MediaryScoutConfigUpdate
 import com.homelab.app.data.security.ServiceUrlNormalizer
 import com.homelab.app.domain.model.ServiceInstance
 import com.homelab.app.util.ServiceType
@@ -147,37 +146,19 @@ class MediaryScoutRepositoryTest {
     }
 
     @Test
-    fun `native controls update only changed settings and mark writes as non-replayable`() = runTest {
-        val requests = mutableListOf<String>()
+    fun `patrol posts to the selected instance without fallback replay`() = runTest {
+        val requests = ConcurrentLinkedQueue<Request>()
         val repository = repository { request ->
-            requests += request.method
+            requests.add(request)
+            assertEquals("POST", request.method)
             assertEquals(instance.id, request.header("X-Homelab-Instance-Id"))
-            when (request.method) {
-                "GET" -> {
-                    assertEquals("/api/agent/config", request.url.encodedPath)
-                    200 to """{"qualityPreference":"medium","dailySweepTime":"09:00","tmdbApiKey":"***"}"""
-                }
-                "PUT" -> {
-                    assertEquals("/api/agent/config", request.url.encodedPath)
-                    assertEquals("true", request.header(NO_FALLBACK_REPLAY_HEADER))
-                    val buffer = Buffer()
-                    requireNotNull(request.body).writeTo(buffer)
-                    assertEquals("""{"qualityPreference":"high"}""", buffer.readUtf8())
-                    200 to """{"config":{"qualityPreference":"high","dailySweepTime":"09:00"}}"""
-                }
-                "POST" -> {
-                    assertEquals("/api/agent/patrol", request.url.encodedPath)
-                    assertEquals("true", request.header(NO_FALLBACK_REPLAY_HEADER))
-                    200 to """{"status":"queued"}"""
-                }
-                else -> error("Unexpected request")
-            }
+            assertEquals("/api/agent/patrol", request.url.encodedPath)
+            assertEquals("true", request.header(NO_FALLBACK_REPLAY_HEADER))
+            200 to """{"status":"queued"}"""
         }
 
-        assertEquals("medium", repository.getConfig(instance.id).qualityPreference)
-        assertEquals("high", repository.saveConfig(instance.id, MediaryScoutConfigUpdate(qualityPreference = "high")).qualityPreference)
         repository.runPatrol(instance.id)
-        assertEquals(listOf("GET", "PUT", "POST"), requests)
+        assertEquals(1, requests.size)
     }
 
     private fun repository(respond: (Request) -> Pair<Int, String>): MediaryScoutRepository {
