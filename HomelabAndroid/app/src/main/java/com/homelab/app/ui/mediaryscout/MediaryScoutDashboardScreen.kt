@@ -17,6 +17,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -25,9 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -59,10 +67,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-private enum class DashboardTab(@StringRes val label: Int, @StringRes val emptyMessage: Int) {
-    LIBRARY(R.string.mediary_scout_library, R.string.mediary_scout_no_entries),
-    TASKS(R.string.mediary_scout_tasks, R.string.mediary_scout_no_tasks),
-    NOTIFICATIONS(R.string.mediary_scout_notifications, R.string.mediary_scout_no_notifications)
+private enum class DashboardTab(@StringRes val label: Int, val icon: ImageVector) {
+    SEARCH(R.string.mediary_search_submit, Icons.Default.Search),
+    LIBRARY(R.string.mediary_scout_library, Icons.Default.VideoLibrary),
+    NOTIFICATIONS(R.string.mediary_scout_notifications, Icons.Default.Notifications),
+    TASKS(R.string.mediary_scout_activity, Icons.Default.Timeline),
+    SETTINGS(R.string.nav_settings, Icons.Default.Settings)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,47 +84,56 @@ fun MediaryScoutDashboardScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val instances by viewModel.instances.collectAsStateWithLifecycle()
-    var tab by rememberSaveable { mutableStateOf(DashboardTab.LIBRARY) }
-    var showAcquire by rememberSaveable { mutableStateOf(false) }
+    var tab by rememberSaveable { mutableStateOf(DashboardTab.SEARCH) }
+    val tabState = rememberSaveableStateHolder()
     val acquireState by viewModel.acquireState.collectAsStateWithLifecycle()
     val searchState by viewModel.searchState.collectAsStateWithLifecycle()
-    if (showAcquire) {
-        MediaryScoutAcquireDialog(
-            searchState = searchState,
-            acquireState = acquireState,
-            onSearch = viewModel::search,
-            onSubmit = viewModel::acquire,
-            onEdit = viewModel::resetAcquire,
-            onDismiss = {
-                if ((acquireState as? UiState.Success)?.data?.status == "requested") {
-                    tab = DashboardTab.TASKS
-                }
-                viewModel.resetAcquire()
-                showAcquire = false
-            }
-        )
+    val configState by viewModel.configState.collectAsStateWithLifecycle()
+    val saveState by viewModel.saveState.collectAsStateWithLifecycle()
+    val patrolState by viewModel.patrolState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(tab) {
+        if (tab == DashboardTab.SETTINGS && configState == UiState.Idle) viewModel.loadConfig()
     }
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    ServiceIcon(type = ServiceType.MEDIARY_SCOUT, size = 32.dp, iconSize = 24.dp)
-                    Text(stringResource(R.string.service_mediary_scout))
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                }
-            },
-            actions = {
-                IconButton(onClick = viewModel::refresh, enabled = state != UiState.Loading) {
-                    Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                DashboardTab.entries.forEach { destination ->
+                    NavigationBarItem(
+                        selected = tab == destination,
+                        onClick = { tab = destination },
+                        icon = { Icon(destination.icon, contentDescription = null) },
+                        label = { Text(stringResource(destination.label), maxLines = 1) }
+                    )
                 }
             }
-        )
-    }) { padding ->
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        ServiceIcon(type = ServiceType.MEDIARY_SCOUT, size = 32.dp, iconSize = 24.dp)
+                        Text(stringResource(R.string.service_mediary_scout))
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { if (tab == DashboardTab.SETTINGS) viewModel.loadConfig() else viewModel.refresh() },
+                        enabled = if (tab == DashboardTab.SETTINGS) configState != UiState.Loading && saveState != UiState.Loading
+                        else state != UiState.Loading
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh))
+                    }
+                }
+            )
+        }
+    ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             ServiceInstancePicker(
                 instances = instances,
@@ -124,33 +143,50 @@ fun MediaryScoutDashboardScreen(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
 
-            when (val current = state) {
-                UiState.Loading, UiState.Idle -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                UiState.Offline -> ErrorScreen(
-                    message = stringResource(R.string.error_network),
-                    onRetry = viewModel::refresh,
-                    isOffline = true
-                )
-                is UiState.Error -> ErrorScreen(message = current.message, onRetry = viewModel::refresh)
-                is UiState.Success -> {
-                    FilledTonalButton(
-                        onClick = { showAcquire = true },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                    ) {
-                        Text(stringResource(R.string.mediary_acquire_title))
-                    }
-                    SecondaryTabRow(selectedTabIndex = tab.ordinal) {
-                        DashboardTab.entries.forEach { option ->
-                            Tab(
-                                selected = tab == option,
-                                onClick = { tab = option },
-                                text = { Text(stringResource(option.label)) }
+            tabState.SaveableStateProvider(tab.name) {
+                when (tab) {
+                    DashboardTab.SEARCH -> MediaryScoutSearchPanel(
+                        searchState = searchState,
+                        acquireState = acquireState,
+                        onSearch = viewModel::search,
+                        onSubmit = viewModel::acquire,
+                        onFinish = {
+                            val requested = (acquireState as? UiState.Success)?.data?.status == "requested"
+                            viewModel.clearAcquisition()
+                            if (requested) tab = DashboardTab.TASKS
+                        }
+                    )
+                    DashboardTab.SETTINGS -> MediaryScoutSettingsPanel(
+                        state = configState,
+                        saveState = saveState,
+                        onRetry = viewModel::loadConfig,
+                        onSave = viewModel::saveConfig
+                    )
+                    else -> {
+                        if (tab == DashboardTab.TASKS) {
+                            FilledTonalButton(
+                                onClick = viewModel::runPatrol,
+                                enabled = patrolState != UiState.Loading,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            ) { Text(stringResource(R.string.mediary_scout_patrol)) }
+                            when (val patrol = patrolState) {
+                                UiState.Loading -> LinearProgressIndicator(Modifier.fillMaxWidth())
+                                is UiState.Error -> Text(patrol.message, Modifier.padding(16.dp), color = MaterialTheme.colorScheme.error)
+                                is UiState.Success -> Text(stringResource(R.string.mediary_scout_patrol_done), Modifier.padding(horizontal = 16.dp))
+                                else -> Unit
+                            }
+                        }
+                        when (val current = state) {
+                            UiState.Loading, UiState.Idle -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+                            UiState.Offline -> ErrorScreen(
+                                message = stringResource(R.string.error_network), onRetry = viewModel::refresh, isOffline = true
                             )
+                            is UiState.Error -> ErrorScreen(message = current.message, onRetry = viewModel::refresh)
+                            is UiState.Success -> MediaryScoutContent(data = current.data, tab = tab)
                         }
                     }
-                    MediaryScoutContent(data = current.data, tab = tab)
                 }
             }
         }
@@ -162,10 +198,11 @@ private fun MediaryScoutContent(data: MediaryScoutDashboardData, tab: DashboardT
     val libraryState = rememberLazyListState()
     val tasksState = rememberLazyListState()
     val notificationsState = rememberLazyListState()
-    val (count, listState) = when (tab) {
-        DashboardTab.LIBRARY -> data.entries.size to libraryState
-        DashboardTab.TASKS -> data.activity.active.size to tasksState
-        DashboardTab.NOTIFICATIONS -> data.activity.recent.size to notificationsState
+    val (count, listState, emptyMessage) = when (tab) {
+        DashboardTab.LIBRARY -> Triple(data.entries.size, libraryState, R.string.mediary_scout_no_entries)
+        DashboardTab.TASKS -> Triple(data.activity.active.size, tasksState, R.string.mediary_scout_no_tasks)
+        DashboardTab.NOTIFICATIONS -> Triple(data.activity.recent.size, notificationsState, R.string.mediary_scout_no_notifications)
+        else -> return
     }
 
     LazyColumn(
@@ -175,7 +212,7 @@ private fun MediaryScoutContent(data: MediaryScoutDashboardData, tab: DashboardT
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         if (count == 0) {
-            item { DashboardCard { Text(stringResource(tab.emptyMessage)) } }
+            item { DashboardCard { Text(stringResource(emptyMessage)) } }
         } else {
             when (tab) {
                 DashboardTab.LIBRARY -> items(data.entries) { entry -> LibraryEntry(entry) }
@@ -189,6 +226,7 @@ private fun MediaryScoutContent(data: MediaryScoutDashboardData, tab: DashboardT
                         notification.createdAt?.let { EntryDetail(formatTimestamp(it)) }
                     }
                 }
+                else -> Unit
             }
         }
     }

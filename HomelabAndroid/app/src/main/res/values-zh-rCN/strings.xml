@@ -2019,6 +2019,15 @@
     <string name="docker_push_rejected">订阅失败，请检查主题地址和访问令牌。</string>
     <string name="docker_push_invalid_url">请输入以 ntfy 主题名称结尾的 HTTPS 地址。</string>
     <string name="docker_push_error">无法更改 Docker 订阅。</string>
+    <string name="mediary_scout_activity">活动</string>
+    <string name="mediary_scout_patrol">立即巡检</string>
+    <string name="mediary_scout_patrol_done">巡检请求已完成</string>
+    <string name="mediary_scout_quality">画质偏好</string>
+    <string name="mediary_scout_language">偏好语言</string>
+    <string name="mediary_scout_sweep_time">每日巡检时间（HH:mm）</string>
+    <string name="mediary_scout_storage">已连接存储</string>
+    <string name="mediary_scout_high">高</string>
+    <string name="mediary_scout_medium">中</string>
     <string name="mediary_acquire_title">搜索影片</string>
     <string name="mediary_acquire_hint">请选择正确的影片，再确认获取。</string>
     <string name="mediary_acquire_query">电影或剧集名称</string>

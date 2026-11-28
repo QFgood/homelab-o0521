@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 import retrofit2.http.Url
 
@@ -33,6 +34,21 @@ interface MediaryScoutApi {
         @Query("query") query: String,
         @Query("type") type: String?
     ): MediaryScoutSearchResult
+
+    @Headers("Accept: application/json")
+    @GET("api/agent/config")
+    suspend fun getConfig(@Header("X-Homelab-Instance-Id") instanceId: String): MediaryScoutConfig
+
+    @Headers("Accept: application/json", "$NO_FALLBACK_REPLAY_HEADER: true")
+    @PUT("api/agent/config")
+    suspend fun updateConfig(
+        @Header("X-Homelab-Instance-Id") instanceId: String,
+        @Body update: MediaryScoutConfigUpdate
+    ): MediaryScoutConfigResponse
+
+    @Headers("Accept: application/json", "$NO_FALLBACK_REPLAY_HEADER: true")
+    @POST("api/agent/patrol")
+    suspend fun runPatrol(@Header("X-Homelab-Instance-Id") instanceId: String)
 
     @Headers("Accept: application/json", "$NO_FALLBACK_REPLAY_HEADER: true")
     @POST("api/agent/acquire")
@@ -107,3 +123,25 @@ data class MediaryScoutNotification(
     val body: String,
     val createdAt: String? = null
 )
+
+
+@Serializable
+data class MediaryScoutConfig(
+    val qualityPreference: String? = null,
+    val preferredLanguage: String? = null,
+    val dailySweepTime: String = "",
+    val storages: List<MediaryScoutStorage> = emptyList()
+)
+
+@Serializable
+data class MediaryScoutStorage(val brand: String, val name: String? = null)
+
+@Serializable
+data class MediaryScoutConfigUpdate(
+    val qualityPreference: String? = null,
+    val preferredLanguage: String? = null,
+    val dailySweepTime: String? = null
+)
+
+@Serializable
+data class MediaryScoutConfigResponse(val config: MediaryScoutConfig)
