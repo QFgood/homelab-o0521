@@ -83,6 +83,8 @@ class MediaryScoutRepository @Inject constructor(
     suspend fun acquire(instanceId: String, request: MediaryScoutAcquireRequest): MediaryScoutAcquireResult =
         checkAgentApi { api.acquire(instanceId, request) }
 
+    suspend fun runPatrol(instanceId: String) = checkAgentApi { api.runPatrol(instanceId) }
+
     private suspend fun <T> checkAgentApi(request: suspend () -> T): T {
         try {
             return request()

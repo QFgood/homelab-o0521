@@ -45,6 +45,8 @@ class MediaryScoutViewModel @Inject constructor(
     val searchState = _searchState.asStateFlow()
     private val _acquireState = MutableStateFlow<UiState<MediaryScoutAcquireResult>>(UiState.Idle)
     val acquireState = _acquireState.asStateFlow()
+    private val _patrolState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
+    val patrolState = _patrolState.asStateFlow()
     private var refreshJob: Job? = null
     private var selectionJob: Job? = null
 
@@ -94,10 +96,29 @@ class MediaryScoutViewModel @Inject constructor(
         }
     }
 
-    fun resetAcquire() {
-        if (_acquireState.value == UiState.Loading || _searchState.value == UiState.Loading) return
-        _searchState.value = UiState.Idle
-        _acquireState.value = UiState.Idle
+    fun clearAcquisition() {
+        if (_acquireState.value != UiState.Loading) _acquireState.value = UiState.Idle
+    }
+
+    fun runPatrol() {
+        runRequest(_patrolState) {
+            repository.runPatrol(instanceId)
+            refresh()
+        }
+    }
+
+    private fun <T> runRequest(state: MutableStateFlow<UiState<T>>, request: suspend () -> T) {
+        if (state.value == UiState.Loading) return
+        state.value = UiState.Loading
+        viewModelScope.launch {
+            try {
+                state.value = UiState.Success(request())
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                state.value = UiState.Error(ErrorHandler.getMessage(context, error))
+            }
+        }
     }
 
     fun refresh() {

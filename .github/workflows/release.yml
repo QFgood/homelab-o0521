@@ -49,23 +49,43 @@ jobs:
 
       - name: Determine Release Tag & Version
         id: vars
+        env:
+          REQUESTED_TAG: ${{ inputs.tag_name }}
         run: |
           VERSION_NAME=$(grep 'versionName = ' HomelabAndroid/app/build.gradle.kts | head -1 | cut -d'"' -f2)
           VERSION_CODE=$(grep 'versionCode = ' HomelabAndroid/app/build.gradle.kts | head -1 | awk '{print $3}')
 
-          if [ -n "${{ github.event.inputs.tag_name }}" ]; then
-            TAG="${{ github.event.inputs.tag_name }}"
+          if [ -n "$REQUESTED_TAG" ]; then
+            TAG="$REQUESTED_TAG"
           elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
           else
             TAG="v${VERSION_NAME}"
           fi
 
-          VERSION="${TAG#v}"
+          if [[ "$TAG" != "v$VERSION_NAME" || ! "$VERSION_NAME" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ! "$VERSION_CODE" =~ ^[0-9]+$ ]]; then
+            echo "::error::The release tag and Android version must match."
+            exit 1
+          fi
+
+          VERSION="$VERSION_NAME"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "Target Tag: $TAG, Version: $VERSION"
+
+      - name: Check release signing secrets
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.HOMELAB_SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.HOMELAB_SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.HOMELAB_SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.HOMELAB_SIGNING_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${SIGNING_KEYSTORE_BASE64:?Missing HOMELAB_SIGNING_KEYSTORE_BASE64}"
+          : "${SIGNING_STORE_PASSWORD:?Missing HOMELAB_SIGNING_STORE_PASSWORD}"
+          : "${SIGNING_KEY_ALIAS:?Missing HOMELAB_SIGNING_KEY_ALIAS}"
+          : "${SIGNING_KEY_PASSWORD:?Missing HOMELAB_SIGNING_KEY_PASSWORD}"
 
       - name: Run Android Unit & Security Tests
         working-directory: HomelabAndroid
@@ -80,21 +100,42 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.HOMELAB_SIGNING_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          if [[ -n "$SIGNING_KEYSTORE_BASE64" ]]; then
-            : "${SIGNING_STORE_PASSWORD:?Missing HOMELAB_SIGNING_STORE_PASSWORD}"
-            : "${SIGNING_KEY_ALIAS:?Missing HOMELAB_SIGNING_KEY_ALIAS}"
-            : "${SIGNING_KEY_PASSWORD:?Missing HOMELAB_SIGNING_KEY_PASSWORD}"
-            signing_store=$(mktemp "$RUNNER_TEMP/homelab-signing.XXXXXX")
-            trap 'rm -f "$signing_store"' EXIT
-            printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$signing_store"
-            ./gradlew :app:assembleRelease --console=plain --no-configuration-cache \
-              -PenableUpdateCheck=true -PgithubUpdateRepository="$GITHUB_REPOSITORY" \
-              -Pandroid.injected.signing.store.file="$signing_store" \
-              -Pandroid.injected.signing.store.password="$SIGNING_STORE_PASSWORD" \
-              -Pandroid.injected.signing.key.alias="$SIGNING_KEY_ALIAS" \
-              -Pandroid.injected.signing.key.password="$SIGNING_KEY_PASSWORD"
-          else
-            ./gradlew :app:assembleRelease --console=plain
+          : "${SIGNING_KEYSTORE_BASE64:?Missing HOMELAB_SIGNING_KEYSTORE_BASE64}"
+          : "${SIGNING_STORE_PASSWORD:?Missing HOMELAB_SIGNING_STORE_PASSWORD}"
+          : "${SIGNING_KEY_ALIAS:?Missing HOMELAB_SIGNING_KEY_ALIAS}"
+          : "${SIGNING_KEY_PASSWORD:?Missing HOMELAB_SIGNING_KEY_PASSWORD}"
+          signing_store=$(mktemp "$RUNNER_TEMP/homelab-signing.XXXXXX")
+          trap 'rm -f "$signing_store"' EXIT
+          printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$signing_store"
+          ./gradlew :app:assembleRelease --console=plain --no-configuration-cache \
+            -PenableUpdateCheck=true -PgithubUpdateRepository="$GITHUB_REPOSITORY" \
+            -Pandroid.injected.signing.store.file="$signing_store" \
+            -Pandroid.injected.signing.store.password="$SIGNING_STORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$SIGNING_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$SIGNING_KEY_PASSWORD"
+
+      - name: Verify APK version and signer
+        env:
+          EXPECTED_CERT: ${{ vars.HOMELAB_SIGNING_CERT_SHA256 }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.version }}
+          RELEASE_CODE: ${{ steps.vars.outputs.version_code }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REPOSITORY" == "QFgood/homelab-o0521" ]]; then
+            EXPECTED_CERT=d41bcc4a3734af1c732d469a3ab6fdfd2e93e921eb93886cc0dae3cd5e269596
+          fi
+          : "${EXPECTED_CERT:?Set HOMELAB_SIGNING_CERT_SHA256 to the installed app certificate SHA-256}"
+          sdkmanager "build-tools;36.0.0"
+          tools="$ANDROID_HOME/build-tools/36.0.0"
+          apk=HomelabAndroid/app/build/outputs/apk/release/app-release.apk
+          actual_cert=$("$tools/apksigner" verify --print-certs "$apk" |
+            awk -F ': ' '/^Signer #[0-9]+ certificate SHA-256 digest:/ { print $2 }')
+          [[ "$actual_cert" == "${EXPECTED_CERT,,}" ]] || { echo "::error::APK signing certificate does not match."; exit 1; }
+          badging=$("$tools/aapt2" dump badging "$apk")
+          grep -Fq "package: name='com.homelab.app' versionCode='$RELEASE_CODE' versionName='$RELEASE_VERSION'" <<< "$badging"
+          if grep -q '^application-debuggable' <<< "$badging"; then
+            echo "::error::Release APK is debuggable."
+            exit 1
           fi
 
       - name: Prepare Release Artifacts
@@ -108,12 +149,14 @@ jobs:
 
       - name: Generate Release Notes
         id: notes
+        env:
+          RELEASE_NOTES: ${{ inputs.release_notes }}
         run: |
           TAG="${{ steps.vars.outputs.tag }}"
           VERSION="${{ steps.vars.outputs.version }}"
           
-          if [ -n "${{ github.event.inputs.release_notes }}" ]; then
-            echo '${{ github.event.inputs.release_notes }}' > release_notes.md
+          if [ -n "$RELEASE_NOTES" ]; then
+            printf '%s\n' "$RELEASE_NOTES" > release_notes.md
           else
             cat <<EOF > release_notes.md
           # Homelab $TAG
@@ -139,17 +182,29 @@ jobs:
           EOF
           fi
 
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.vars.outputs.tag }}
-          name: ${{ github.event.inputs.release_title || steps.vars.outputs.tag }}
-          body_path: release_notes.md
-          files: |
-            release-artifacts/Homelab.apk
-            release-artifacts/Homelab.apk.sha256
-          draft: false
-          prerelease: false
+      - name: Upload and publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.vars.outputs.tag }}
+          RELEASE_TITLE: ${{ inputs.release_title || steps.vars.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if release=$(gh release view "$RELEASE_TAG" --json isDraft 2>/dev/null); then
+            jq -e '.isDraft' <<< "$release" >/dev/null || {
+              echo "::error::The release is already public. Use a new version."
+              exit 1
+            }
+            gh release edit "$RELEASE_TAG" --target "$GITHUB_SHA" --title "$RELEASE_TITLE" --notes-file release_notes.md
+          else
+            gh release create "$RELEASE_TAG" --target "$GITHUB_SHA" --draft --title "$RELEASE_TITLE" --notes-file release_notes.md
+          fi
+          gh release upload "$RELEASE_TAG" --clobber release-artifacts/Homelab.apk release-artifacts/Homelab.apk.sha256
+          expected_size=$(stat -c %s release-artifacts/Homelab.apk)
+          gh release view "$RELEASE_TAG" --json isDraft,assets |
+            jq -e --argjson size "$expected_size" '.isDraft and any(.assets[]; .name == "Homelab.apk" and .size == $size)'
+          gh release edit "$RELEASE_TAG" --draft=false --latest
+          gh api "repos/$GITHUB_REPOSITORY/releases/latest" |
+            jq -e --arg tag "$RELEASE_TAG" --argjson size "$expected_size" '.tag_name == $tag and any(.assets[]; .name == "Homelab.apk" and .size == $size)'
 
       - name: Update app-version.json metadata
         run: |

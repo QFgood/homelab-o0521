@@ -1,0 +1,1 @@
+Panneau natif Mediary Scout avec recherche et affiches, médiathèque, notifications, activité et vérification manuelle.

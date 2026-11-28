@@ -35,6 +35,10 @@ interface MediaryScoutApi {
     ): MediaryScoutSearchResult
 
     @Headers("Accept: application/json", "$NO_FALLBACK_REPLAY_HEADER: true")
+    @POST("api/agent/patrol")
+    suspend fun runPatrol(@Header("X-Homelab-Instance-Id") instanceId: String)
+
+    @Headers("Accept: application/json", "$NO_FALLBACK_REPLAY_HEADER: true")
     @POST("api/agent/acquire")
     suspend fun acquire(
         @Header("X-Homelab-Instance-Id") instanceId: String,
@@ -66,7 +70,8 @@ data class MediaryScoutCandidate(
     val type: String,
     val originalTitle: String = "",
     val overview: String = "",
-    val seasonNumbers: List<Int> = emptyList()
+    val seasonNumbers: List<Int> = emptyList(),
+    val posterPath: String? = null
 )
 
 @Serializable

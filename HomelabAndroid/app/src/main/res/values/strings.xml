@@ -2023,10 +2023,14 @@
     <string name="docker_push_rejected">Subscription failed. Check the topic URL and access token.</string>
     <string name="docker_push_invalid_url">Enter an HTTPS URL ending in an ntfy topic name.</string>
     <string name="docker_push_error">Could not change the Docker subscription.</string>
+    <string name="mediary_scout_activity">Activity</string>
+    <string name="mediary_scout_patrol">Run patrol now</string>
+    <string name="mediary_scout_patrol_done">Patrol request complete</string>
     <string name="mediary_acquire_title">Search and acquire</string>
     <string name="mediary_acquire_hint">Select a title, then confirm acquisition.</string>
     <string name="mediary_acquire_query">Movie or series title</string>
     <string name="mediary_acquire_season">Season</string>
+    <string name="mediary_acquire_action">Acquire</string>
     <string name="mediary_acquire_submit">Confirm acquisition</string>
     <string name="mediary_search_submit">Search</string>
     <string name="mediary_search_empty">No matching titles found.</string>

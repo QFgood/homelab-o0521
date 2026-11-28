@@ -2019,10 +2019,14 @@
     <string name="docker_push_rejected">L’abonnement a échoué. Vérifiez l’URL du sujet et le jeton.</string>
     <string name="docker_push_invalid_url">Saisissez une URL HTTPS se terminant par un nom de sujet ntfy.</string>
     <string name="docker_push_error">Impossible de modifier l’abonnement Docker.</string>
+    <string name="mediary_scout_activity">Activité</string>
+    <string name="mediary_scout_patrol">Lancer la vérification</string>
+    <string name="mediary_scout_patrol_done">Demande de vérification terminée</string>
     <string name="mediary_acquire_title">Rechercher un titre</string>
     <string name="mediary_acquire_hint">Sélectionnez un titre, puis confirmez la récupération.</string>
     <string name="mediary_acquire_query">Titre du film ou de la série</string>
     <string name="mediary_acquire_season">Saison</string>
+    <string name="mediary_acquire_action">Demander</string>
     <string name="mediary_acquire_submit">Confirmer la récupération</string>
     <string name="mediary_search_submit">Rechercher</string>
     <string name="mediary_search_empty">Aucun titre correspondant.</string>

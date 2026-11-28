@@ -2016,10 +2016,14 @@
     <string name="docker_push_rejected">Abonnement fehlgeschlagen. Prüfe Themen-URL und Zugriffstoken.</string>
     <string name="docker_push_invalid_url">Gib eine HTTPS-URL ein, die mit einem ntfy-Themennamen endet.</string>
     <string name="docker_push_error">Docker-Abonnement konnte nicht geändert werden.</string>
+    <string name="mediary_scout_activity">Aktivität</string>
+    <string name="mediary_scout_patrol">Prüfung starten</string>
+    <string name="mediary_scout_patrol_done">Prüfanfrage abgeschlossen</string>
     <string name="mediary_acquire_title">Titel suchen</string>
     <string name="mediary_acquire_hint">Wähle einen Titel aus und bestätige den Abruf.</string>
     <string name="mediary_acquire_query">Film- oder Serientitel</string>
     <string name="mediary_acquire_season">Staffel</string>
+    <string name="mediary_acquire_action">Anfordern</string>
     <string name="mediary_acquire_submit">Abruf bestätigen</string>
     <string name="mediary_search_submit">Suchen</string>
     <string name="mediary_search_empty">Keine passenden Titel gefunden.</string>

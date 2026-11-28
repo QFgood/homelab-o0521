@@ -1,6 +1,7 @@
 package com.homelab.app.data.repository
 
 import com.homelab.app.data.remote.TlsClientSelector
+import com.homelab.app.data.remote.NO_FALLBACK_REPLAY_HEADER
 import com.homelab.app.data.remote.api.MediaryScoutApi
 import com.homelab.app.data.remote.api.MediaryScoutAcquireRequest
 import com.homelab.app.data.security.ServiceUrlNormalizer
@@ -142,6 +143,22 @@ class MediaryScoutRepositoryTest {
         val failure = runCatching { oldServer.search(instance.id, "Example", null) }.exceptionOrNull()
         assertEquals(MediaryScoutSearchUnavailable::class.java, failure?.javaClass)
         assertEquals(listOf("GET"), requests.map { it.method })
+    }
+
+    @Test
+    fun `patrol posts to the selected instance without fallback replay`() = runTest {
+        val requests = ConcurrentLinkedQueue<Request>()
+        val repository = repository { request ->
+            requests.add(request)
+            assertEquals("POST", request.method)
+            assertEquals(instance.id, request.header("X-Homelab-Instance-Id"))
+            assertEquals("/api/agent/patrol", request.url.encodedPath)
+            assertEquals("true", request.header(NO_FALLBACK_REPLAY_HEADER))
+            200 to """{"status":"queued"}"""
+        }
+
+        repository.runPatrol(instance.id)
+        assertEquals(1, requests.size)
     }
 
     private fun repository(respond: (Request) -> Pair<Int, String>): MediaryScoutRepository {

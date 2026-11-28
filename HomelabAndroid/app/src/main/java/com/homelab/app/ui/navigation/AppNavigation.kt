@@ -158,6 +158,7 @@ fun AppNavigation(
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
+            if (currentDestination?.route == "mediary-scout/{instanceId}/dashboard") return@Scaffold
             val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
             val isServiceChild = currentDestination?.route?.contains("/") == true
             val isMediaChild = currentDestination?.route?.startsWith("media/") == true

@@ -11,3 +11,5 @@ Key features:
 • 100% free and open-source under Apache 2.0 license.
 
 Screenshots are allowed on login, app lock, PIN, and backup screens.
+
+Native Mediary Scout panel with poster search, library, notifications, activity, and manual patrol.

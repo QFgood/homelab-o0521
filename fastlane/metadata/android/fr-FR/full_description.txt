@@ -10,3 +10,5 @@ Fonctionnalités clés :
 • 100 % gratuit et open source sous licence Apache 2.0.
 
 Les captures d’écran sont autorisées sur les écrans de connexion, de verrouillage, de code PIN et de sauvegarde.
+
+Panneau natif Mediary Scout avec recherche et affiches, médiathèque, notifications, activité et vérification manuelle.
