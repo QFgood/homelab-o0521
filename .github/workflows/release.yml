@@ -74,6 +74,19 @@ jobs:
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "Target Tag: $TAG, Version: $VERSION"
 
+      - name: Check release signing secrets
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.HOMELAB_SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.HOMELAB_SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.HOMELAB_SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.HOMELAB_SIGNING_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${SIGNING_KEYSTORE_BASE64:?Missing HOMELAB_SIGNING_KEYSTORE_BASE64}"
+          : "${SIGNING_STORE_PASSWORD:?Missing HOMELAB_SIGNING_STORE_PASSWORD}"
+          : "${SIGNING_KEY_ALIAS:?Missing HOMELAB_SIGNING_KEY_ALIAS}"
+          : "${SIGNING_KEY_PASSWORD:?Missing HOMELAB_SIGNING_KEY_PASSWORD}"
+
       - name: Run Android Unit & Security Tests
         working-directory: HomelabAndroid
         run: ./gradlew :app:testDebugUnitTest --console=plain
