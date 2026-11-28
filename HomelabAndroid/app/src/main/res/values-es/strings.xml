@@ -2023,6 +2023,7 @@
     <string name="mediary_acquire_hint">Elige un título y confirma la obtención.</string>
     <string name="mediary_acquire_query">Título de la película o serie</string>
     <string name="mediary_acquire_season">Temporada</string>
+    <string name="mediary_acquire_action">Solicitar</string>
     <string name="mediary_acquire_submit">Confirmar obtención</string>
     <string name="mediary_search_submit">Buscar</string>
     <string name="mediary_search_empty">No se encontraron títulos coincidentes.</string>

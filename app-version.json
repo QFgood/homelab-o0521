@@ -1,5 +1,5 @@
 {
-  "latest": "1.6.7",
-  "android_url": "https://github.com/QFgood/homelab-o0521/releases/download/v1.6.7/Homelab.apk",
-  "changelog": "允许在登录、应用锁、PIN 和备份页面截图。\n应用内更新改用 QFgood/homelab-o0521。"
+  "latest": "1.6.8",
+  "android_url": "https://github.com/QFgood/homelab-o0521/releases/download/v1.6.8/Homelab.apk",
+  "changelog": "巡影搜索采用海报卡片，选片后确认获取。底部通知页收集 Docker 消息和服务告警。"
 }

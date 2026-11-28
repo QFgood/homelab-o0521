@@ -2023,6 +2023,7 @@
     <string name="mediary_acquire_hint">Sélectionnez un titre, puis confirmez la récupération.</string>
     <string name="mediary_acquire_query">Titre du film ou de la série</string>
     <string name="mediary_acquire_season">Saison</string>
+    <string name="mediary_acquire_action">Demander</string>
     <string name="mediary_acquire_submit">Confirmer la récupération</string>
     <string name="mediary_search_submit">Rechercher</string>
     <string name="mediary_search_empty">Aucun titre correspondant.</string>

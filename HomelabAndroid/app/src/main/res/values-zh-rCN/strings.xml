@@ -2023,6 +2023,7 @@
     <string name="mediary_acquire_hint">请选择正确的影片，再确认获取。</string>
     <string name="mediary_acquire_query">电影或剧集名称</string>
     <string name="mediary_acquire_season">季数</string>
+    <string name="mediary_acquire_action">获取</string>
     <string name="mediary_acquire_submit">确认获取</string>
     <string name="mediary_search_submit">搜索</string>
     <string name="mediary_search_empty">没有找到匹配的影片。</string>

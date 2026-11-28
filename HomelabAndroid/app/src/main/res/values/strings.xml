@@ -2027,6 +2027,7 @@
     <string name="mediary_acquire_hint">Select a title, then confirm acquisition.</string>
     <string name="mediary_acquire_query">Movie or series title</string>
     <string name="mediary_acquire_season">Season</string>
+    <string name="mediary_acquire_action">Acquire</string>
     <string name="mediary_acquire_submit">Confirm acquisition</string>
     <string name="mediary_search_submit">Search</string>
     <string name="mediary_search_empty">No matching titles found.</string>

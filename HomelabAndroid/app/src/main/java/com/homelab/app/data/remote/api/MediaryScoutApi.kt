@@ -66,7 +66,8 @@ data class MediaryScoutCandidate(
     val type: String,
     val originalTitle: String = "",
     val overview: String = "",
-    val seasonNumbers: List<Int> = emptyList()
+    val seasonNumbers: List<Int> = emptyList(),
+    val posterPath: String? = null
 )
 
 @Serializable
